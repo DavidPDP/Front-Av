@@ -72,13 +72,17 @@
             <v-card-title class="eventsTitle">Eventos Asignados</v-card-title>
             <div v-for="(item,index) in assignedevents" :key="index">
               <v-row>
-                <v-col cols="10">
+                <v-col cols="9">
                   <v-btn
                     class="eventsTitle"
                     text
                     block
                     @click="item.visible = changeinfovisibility(item)"
                   >{{item.title}} - {{item.route}}</v-btn>
+                </v-col>
+                <v-col cols="1">
+                  <v-chip text-color="white" v-if="item.priority >= 700" color="red">{{item.priority}}</v-chip>
+                  <v-chip text-color="white" v-else color="primary">{{item.priority}}</v-chip>
                 </v-col>
                 <v-col cols="1">
                   <v-btn text block @click="checkadd(item)">
@@ -153,13 +157,17 @@
             <v-card-title class="eventsTitle">Eventos Aceptados</v-card-title>
             <div v-for="(item,index) in acceptedevents" :key="index">
               <v-row>
-                <v-col cols="11">
+                <v-col cols="10">
                   <v-btn
                     class="eventsBody"
                     text
                     block
                     @click="item.visible = changeinfovisibility(item)"
                   >{{item.title}} - {{item.route}}</v-btn>
+                </v-col>
+                <v-col cols="1">
+                  <v-chip text-color="white" v-if="item.priority >= 700" color="red">{{item.priority}}</v-chip>
+                  <v-chip text-color="white" v-else color="primary">{{item.priority}}</v-chip>
                 </v-col>
                 <v-col cols="1">
                   <!-- <v-btn text block @click="eventfinished(item)">
@@ -222,6 +230,37 @@
                   </v-list-item>
                 </v-list>
               </v-col>
+            </div>
+          </v-card>
+        </v-flex>
+      </v-layout>
+
+      <!-------------------------------------------------------------------------------------------->
+      <!-----------------------------------On Hold Events------------------------------------------>
+      <v-layout row wrap>
+        <v-flex>
+          <v-card outlined class="px-5">
+            <v-card-title class="eventsTitle">Eventos en Espera</v-card-title>
+            <div v-for="(item,index) in onHoldEvents" :key="index">
+              <v-row>
+                <v-col cols="10">
+                  <v-btn
+                    class="eventsTitle"
+                    text
+                    block
+                    @click="item.visible = changeinfovisibility(item)"
+                  >{{item.title}} - {{item.route}}</v-btn>
+                </v-col>
+                <v-col cols="1">
+                  <v-chip text-color="white" v-if="item.priority >= 700" color="red">{{item.priority}}</v-chip>
+                  <v-chip text-color="white" v-else color="primary">{{item.priority}}</v-chip>
+                </v-col>
+                <v-col cols="1">
+                  <v-btn text block @click="checkadd(item)">
+                    <v-icon>check_circle_outline</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
             </div>
           </v-card>
         </v-flex>
@@ -304,8 +343,65 @@ export default {
           title: "No disponible"
         }
       ],
-      assignedevents: [],
-      acceptedevents: [],
+      assignedevents: [{
+        id: 1,
+        title: "Evento 1",
+        route: "T31",
+        state: "In procces",
+        priority: 400,
+        controller: "User1",
+        creation: "123",
+        check: "Check",
+        visible: true,
+        checkadd: true,
+        checkdelete: false,
+        actions: {
+
+        },
+        analysisElements: {
+          
+        }
+      }],
+      acceptedevents: [
+        {        
+        id: 1,
+        title: "Evento 1",
+        route: "T31",
+        state: "In procces",
+        priority: 1000,
+        controller: "User1",
+        creation: "123",
+        check: "Check",
+        visible: true,
+        checkadd: true,
+        checkdelete: false,
+        actions: {
+
+        },
+        analysisElements: {
+          
+        }
+      }
+      ],
+      onHoldEvents: [{
+                id: 1,
+        title: "Evento 1",
+        route: "T31",
+        state: "In procces",
+        priority: 1000,
+        controller: "User1",
+        creation: "123",
+        check: "Check",
+        visible: true,
+        checkadd: true,
+        checkdelete: false,
+        actions: {
+
+        },
+        analysisElements: {
+          
+        }
+      }],
       isOpenMessage: false,
       msg: "",
       lastEvent: 0,
@@ -426,7 +522,7 @@ export default {
       var headers = { Authorization: this.$store.state.token };
       Axios.get(this.$store.state.backend + "controller/asignedEvents", {
         params: {
-          id: this.$store.state.person.id
+          id: this.$store.state.person.accountName
         },
         headers: headers
       }).then(response => {

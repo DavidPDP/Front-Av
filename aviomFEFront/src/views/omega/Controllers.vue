@@ -18,13 +18,10 @@
         >
       </v-text-field>
     </v-card-title>
-  <v-data-table 
-    no-data-text="No hay controladores por el momento"
+  <v-data-table no-data-text="No hay controladores por el momento"
     :headers="headers"
-    :items="people"
-    sort-by="id"
+    :items="controllers"
     :search="search"
-    
   >
  
     <template v-slot:top> 
@@ -37,7 +34,7 @@
               <v-container>
                 <v-row>
                   <v-col >
-                       <v-list  subheader>
+                       <v-list subheader>
 
                         <v-list-item>
                           <v-list-item-content>
@@ -45,7 +42,7 @@
                           </v-list-item-content>
 
                           <v-list-item-content>
-                            <v-list-item-title>{{ translateState(selectedController.state) }}</v-list-item-title>
+                            <v-list-item-title>{{ translateState(selectedController.lastUserTrack.state.name) }}</v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
                         <v-list-item >
@@ -54,7 +51,7 @@
                           </v-list-item-content>
 
                           <v-list-item-content>
-                            <v-list-item-title>{{ selectedController.stateStart }}</v-list-item-title>
+                            <v-list-item-title>{{ new Date(selectedController.lastUserTrack.startTime).toLocaleDateString("en-US") }}</v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
                         
@@ -67,7 +64,7 @@
                           </v-list-item-content>
 
                           <v-list-item-content>
-                            <v-list-item-title>{{selectedController.assignedEvents}}</v-list-item-title>
+                            <v-list-item-title>{{ "assignedEvents.length" }}</v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
 
@@ -77,7 +74,7 @@
                           </v-list-item-content>
 
                           <v-list-item-content>
-                            <v-list-item-title>{{selectedController.activeEvents}}</v-list-item-title>
+                            <v-list-item-title>{{ "activeEvents.length" }}</v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
 
@@ -87,28 +84,27 @@
                           </v-list-item-content>
 
                           <v-list-item-content>
-                            <v-list-item-title>{{selectedController.solvedEvents}}</v-list-item-title>
+                            <v-list-item-title>{{ "solvedEvents.length" }}</v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
 
                         <v-divider ></v-divider>
 
-                         <v-subheader >Estados</v-subheader>
+                        <v-subheader >Estados</v-subheader>
 
-                        
                         <div v-if="detailDialog">
                         <v-list-item 
-                          v-for="(state, key) in $store.state.userStates" :key="key"
+                          v-for="(track, key) in operatorTracks" :key="key"
                         >
                           <v-list-item-content>
                             <v-list-item-title class="title">
-                               {{ key + ": "}}
+                               {{ track.state.name + ": "}}
                               </v-list-item-title>
                           </v-list-item-content>
 
                           <v-list-item-content>
                             <v-list-item-title>
-                               {{ (selectedController.stateTimes[state] == undefined? "00:00:00" : selectedController.stateTimes[state]) }}
+                               {{ new Date(track.startTime).toLocaleDateString("en-US") }}
                               </v-list-item-title>
                           </v-list-item-content>
                         </v-list-item>
@@ -135,20 +131,8 @@
         </v-dialog>
     </template>
     <template v-slot:item.action="{ item }">
-      <v-btn
-        text
-        color="primary accent-4"
-        @click="openDetails(item)"
-      >
-        Ver Detalles
-      </v-btn>
-      <v-btn
-        text
-        color="primary accent-4"
-        @click="viewHistory(item)"
-      >
-        Ver Historial
-      </v-btn>
+      <v-btn text color="primary accent-4" @click="openDetails(item)">Ver Detalles</v-btn>
+      <v-btn text color="primary accent-4" @click="viewHistory(item)">Ver Historial</v-btn>
     </template>
   </v-data-table>
   </v-card>
@@ -157,84 +141,60 @@
 </template>
 
 <script>
-import Axios from 'axios';
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
+import { mapGetters } from "vuex";
+import { FETCH_OPERATORS, FETCH_EVENT_HISTORY, FETCH_OPERATOR_HISTORY } from "@/store/actions.type";
+import FormatsService from "@/common/formats.service";
 
 export default {
   data() {
     return {
       search: '',
-       controllerDetails:[
-            {text: 'Estado', icon:''},
-            {text: 'Ultima Actualización', icon:''},
-            {text: 'Eventos Asignados', icon:''},
-            {text: 'Eventos Activos',icon:''},
-            {text: 'Eventos Atendidos',icon:''},
-            {text: 'Disponible',icon:''},
-            {text: 'Evento Asignado',icon:''},
-            {text: 'Ocupado',icon:''},
-            {text: 'No Disponible',icon:''},
-        ],
-        headers: [
-        { text: 'Identificador', align: 'left', sortable: false, value: 'id'},
-        { text: 'Nombre', value: 'name'},
-        { text: 'Estación de trabajo', value: 'station' },
-        { text: 'Acciones', value: 'action', sortable: false ,align:'center'},
+      headers: [
+        { text: 'Nombre', value: 'name', align:'center'},
+        { text: 'Último estado', value: 'lastUserTrack.state.name', align:'center'},
+        { text: 'Último evento', value: 'lastEvent.code', align:'center'},
+        { text: 'Carga de trabajo', value: 'workload', align:'center'},
+        { text: 'Eventos asignados', value: 'assignedEvents', align:'center'},
+        { text: 'Eventos activos', value: 'activeEvents', align:'center'},
+        { text: 'Eventos resueltos', value: 'solvedEvents', align:'center'},
+        { text: 'Acciones', value: 'action', sortable: false, align:'center'}
       ],
-      people: [],
       detailDialog:false,
-      selectedController:'',
+      selectedController: {"lastUserTrack":{"state":{"name":null,"startTime":null}}}
     };
   },
-  beforeMount() {
-    this.loadControllers();
-    this.connect();
+  computed: {
+    ...mapGetters(["controllers", "activeEvents", 
+      "assignedEvents", "solvedEvents", "operatorTracks"])
   },
+
   methods: {
-
-      openDetails (item) {
-        this.selectedController = Object.assign({}, item)
-        this.detailDialog = true
-      },
-
-      closeDetails () {
-        this.detailDialog = false
-      },
-
-    loadControllers() {
-      var headers = { Authorization: this.$store.state.token };
-      Axios.get(this.$store.state.backend + "controller/online", {headers:headers}).then(
-        response => {
-          this.people = response.data;
-        }
-      );
+    openDetails (item) {
+      this.detailDialog = true;
+      this.selectedController = Object.assign({}, item);
+      this.$store.dispatch(FETCH_EVENT_HISTORY, this.selectedController.accountName);
+      this.$store.dispatch(FETCH_OPERATOR_HISTORY, this.selectedController.accountName);
     },
+
+    closeDetails () {
+      this.detailDialog = false
+    },
+
     translateState(state) {
       return this.$store.state.states[state];
     },
-    connect() {
-      this.socket = new SockJS(this.$store.state.backend + "ws");
-      this.stompClient = Stomp.over(this.socket);
-      this.stompClient.connect(
-        {},
-        (frame) => {
-          window.console.log("Frame: " + frame);
-          this.connected = true;
-          this.stompClient.subscribe("/queue/omega", (tick) => {
-            window.console.log("Tick: " + tick);
-            this.loadControllers();
-          });
-        },
-        (error) => {
-          window.console.log(error)
-          this.connected = false;
-        }
-      );
-    },
+
     viewHistory(item) {
       this.$router.push("/omega/hocontrollers/" + item.id);
+    },
+
+    formatDate(date){
+      return FormatsService.formatDate(date);
     }
+
+  },
+  beforeMount() {
+    this.$store.dispatch(FETCH_OPERATORS, true);
   }
 };
 </script>

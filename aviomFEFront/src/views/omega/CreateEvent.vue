@@ -43,8 +43,8 @@ export default {
   methods: {
     createEvent() {
       if (this.checkFieldNotEmpty() == true) {
-        var headers = { Authorization: this.$store.state.token };
-        Axios.post(this.$store.state.backend + "events/create", this.event, {headers:headers})
+        var headers = { Authorization: "Bearer " + this.$store.state.token };
+        Axios.post(this.$store.state.backend + "/atc/events", this.event, {headers:headers})
           .then(response => {
             if (response.status != 200) {
               alert(response.statusText);

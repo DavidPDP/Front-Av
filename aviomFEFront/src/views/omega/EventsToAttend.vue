@@ -198,7 +198,7 @@ export default {
     },
     loadEvents() {
       var headers = { Authorization: this.$store.state.token };
-      Axios.get(this.$store.state.backend + "/atc/events/User1/active_events", {
+      Axios.get(this.$store.state.backend + "events", {
         headers: headers
       }).then(response => {
         this.contents = response.data;

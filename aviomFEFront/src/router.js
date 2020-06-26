@@ -1,5 +1,5 @@
 import Router from 'vue-router'
-import Login from './Login.vue'
+import Login from './views/Login/views/Login.vue'
 import Controller from './views/controller/Controller.vue'
 import EventManagement from './views/controller/views/EventManagement.vue'
 import Omega from './views/omega/Omega.vue'
@@ -13,6 +13,7 @@ import UserManagement from './views/Admin/views/UserManagement.vue'
 import RolesManagement from './views/Admin/views/RolesManagement.vue'
 import ServiceManagement from './views/Admin/views/ServiceManagement.vue'
 import SystemSettings from './views/Admin/views/SystemSettings.vue'
+import CategoriesManagement from './views/Admin/views/CategoriesManagement.vue'
 import Admin from './views/Admin/Admin'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import {OMEGA,CONTROLLER,ADMIN} from "./roles";
@@ -106,6 +107,11 @@ export default new Router({
            path:'systemSettings',
            component:SystemSettings
          },
+         {
+          name:'categoriesManagement',
+          path:'categoriesManagement',
+          component: CategoriesManagement,
+        },
          
       ]
     }

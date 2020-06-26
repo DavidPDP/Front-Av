@@ -42,13 +42,6 @@ hr{
 </style>
 
 <script>
-
-
-if (!("Notification" in window)) {
-  alert("This browser does not support desktop notification");
-} else {
-  Notification.requestPermission();
-}
 export default {
   name:'app',
   components:{

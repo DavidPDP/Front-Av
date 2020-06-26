@@ -18,6 +18,7 @@ export default {
                 {title:"Gestión roles", icon:"people", link:'rolesManagement'},
                 {title:"Gestión de servicios", icon:"people", link:'serviceManagement'},
                 {title:"Parámetros del sistema", icon:"settings_system_daydream",link:'systemSettings'},
+                {title:"Gestión de categorias", icon:"ballot",link:'categoriesManagement'},
                 
             ]
         }

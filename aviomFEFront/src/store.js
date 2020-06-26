@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import createPersistedState from "vuex-persistedstate"; 
+import createPersistedState from "vuex-persistedstate";
+import operators from "@/store/operators.module";
+import events from "@/store/events.module";
 
 Vue.use(Vuex);
 
-const  getDefaultState=()=>{
+const getDefaultState=()=>{
   return {
       person:{
           accountName:'',
@@ -16,6 +18,10 @@ const  getDefaultState=()=>{
 }
 
 export default new Vuex.Store({
+  modules: {
+    operators,
+    events
+  },
   plugins:[createPersistedState()],
   state: {
     backend: 'http://localhost:8085',
