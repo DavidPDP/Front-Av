@@ -33,7 +33,9 @@ const actions = {
             ({ data }) => {
                 context.commit(UPDATE_PARAMETER, data);
             }
-        )
+        ).catch((error)=>{
+            console.log(error);
+        })
     }
 };
 
