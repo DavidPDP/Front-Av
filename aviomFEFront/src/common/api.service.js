@@ -85,9 +85,14 @@ export const EventsService = {
 
 const evaluatorParametersResource = "/evaluator/parameters"
 export const ParametersService = {
-  retrieveParameters() {
+  retrieveParameters(active) {
     ApiService.setHeader();
-    return ApiService.get(evaluatorParametersResource, "active");
+    if(active){
+      return ApiService.get(evaluatorParametersResource, "active");
+    }else{
+      return ApiService.query(evaluatorParametersResource);
+    }
+    
   },
   updateParameter(parameterName, parameter) {
     ApiService.setHeader();

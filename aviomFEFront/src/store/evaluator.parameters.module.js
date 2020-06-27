@@ -19,8 +19,8 @@ const getters = {
 };
 
 const actions = {
-    [FECTH_PARAMETERS](context) {
-        ParametersService.retrieveParameters().then(
+    [FECTH_PARAMETERS](context, active) {
+        ParametersService.retrieveParameters(active).then(
             ({ data }) => {
                 context.commit(SET_PARAMETERS, data);
             }
