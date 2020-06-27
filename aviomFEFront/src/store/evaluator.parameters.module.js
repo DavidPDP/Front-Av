@@ -10,7 +10,7 @@ import {
 } from "./actions.type";
 import {
     ERROR, INFO, SUCCESS
-} from "@/common/evaluator.transtaction.states";
+} from "@/common/evaluator.request.states";
 
 
 const state = {
