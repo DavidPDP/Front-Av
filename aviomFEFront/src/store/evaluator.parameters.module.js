@@ -70,7 +70,7 @@ const mutations = {
         if (parameters != null) {
             state.parameters = parameters;
             state.info.active = true;
-            state.info.infoType = SUCCESS;
+            state.info.infoType = INFO;
             state.info.text = "parámetros obtenidos";
         }
     },
