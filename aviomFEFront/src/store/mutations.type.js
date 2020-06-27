@@ -10,4 +10,4 @@ export const SET_EVENT_HISTORY="setEventHistory";
 
 //Evaluator parameters
 export const SET_PARAMETERS = "setParameters";
-export const UPDATE_PARAMETER = "updateParameter";
+export const SET_UPDATED_PARAMETER = "updateParameter";
