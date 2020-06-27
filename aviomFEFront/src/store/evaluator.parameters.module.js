@@ -14,15 +14,18 @@ import {
     ERROR, INFO, SUCCESS
 } from "@/common/evaluator.request.states";
 
-
-const state = {
-    parameters: [],
-    info: {
-        active: false,
-        state: "",
-        text: "",
+const getDefaultState = () => {
+    return {
+        parameters: [],
+        info: {
+            active: false,
+            state: "",
+            text: "",
+        }
     }
-};
+}
+
+const state = getDefaultState();
 
 const getters = {
     parameters(state) {
