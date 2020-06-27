@@ -44,6 +44,9 @@ export default {
         { title: "Eventos", icon: "inbox", link:'eventstoattend' },
         { title: "Controladores", icon: "supervised_user_circle", link:'controllers' },
         { title: "Crear evento", icon: "add_circle", link:'createevent' },
+        { title: "Dashboard", icon: "mdi-view-dashboard", link: "dashboard" },
+        { title: "Expresiones", icon: "mdi-iframe-variable-outline", link: "dashexpressions" },
+        { title: "Configurar evaluador", icon: "mdi-cogs", link: "parameters" },
       ],
     };
   },
