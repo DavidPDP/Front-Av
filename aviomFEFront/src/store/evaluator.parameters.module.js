@@ -2,7 +2,7 @@ import { ParametersService } from "@/common/api.service";
 import {
     SET_PARAMETERS,
     SET_UPDATED_PARAMETER,
-    MANAGE_PARAMETERS_REQUEST_ERROR
+    MANAGE_EVALUATOR_REQUEST_ERROR
 } from "./mutations.type";
 import {
     FECTH_PARAMETERS,
@@ -38,7 +38,7 @@ const actions = {
                 context.commit(SET_PARAMETERS, data);
             }
         ).catch((error) => {
-            context.commit(MANAGE_PARAMETERS_REQUEST_ERROR, error)
+            context.commit(MANAGE_EVALUATOR_REQUEST_ERROR, error)
         });
     },
     [UPDATE_PARAMETER](context, parameter) {
@@ -47,13 +47,13 @@ const actions = {
                 context.commit(SET_UPDATED_PARAMETER, data);
             }
         ).catch((error) => {
-            context.commit(MANAGE_PARAMETERS_REQUEST_ERROR, error)
+            context.commit(MANAGE_EVALUATOR_REQUEST_ERROR, error)
         })
     }
 };
 
 const mutations = {
-    [MANAGE_PARAMETERS_REQUEST_ERROR](state, error) {
+    [MANAGE_EVALUATOR_REQUEST_ERROR](state, error) {
         state.info.active = true;
         state.info.infoType = ERROR;
         let text = "";

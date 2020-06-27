@@ -8,7 +8,11 @@ export const SET_OPERATOR_HISTORY = "setOperatorHistory";
 export const ADD_EVENT = "addEvent";
 export const SET_EVENT_HISTORY = "setEventHistory";
 
+
+//Evaluator
+export const MANAGE_EVALUATOR_REQUEST_ERROR = "manageRequestError";
+
+
 //Evaluator parameters
 export const SET_PARAMETERS = "setParameters";
 export const SET_UPDATED_PARAMETER = "updateParameter";
-export const MANAGE_PARAMETERS_REQUEST_ERROR = "manageRequestError";
