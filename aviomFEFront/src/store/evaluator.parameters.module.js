@@ -19,7 +19,7 @@ const state = {
     parameters: [],
     info: {
         active: false,
-        infoType: "",
+        state: "",
         text: "",
     }
 };
@@ -63,7 +63,7 @@ const mutations = {
     },
     [MANAGE_PARAMETERS_REQUEST_ERROR](state, error) {
         state.info.active = true;
-        state.info.infoType = ERROR;
+        state.info.state = ERROR;
         let text = "";
         if (!error.response) {
             text = "Error: " + error;
@@ -78,7 +78,7 @@ const mutations = {
         if (parameters != null) {
             state.parameters = parameters;
             state.info.active = true;
-            state.info.infoType = INFO;
+            state.info.state = INFO;
             state.info.text = "parámetros obtenidos";
         }
     },
@@ -88,7 +88,7 @@ const mutations = {
 
             state.parameters.splice(index, 1, parameter);
             state.info.active = true;
-            state.info.infoType = SUCCESS;
+            state.info.state = SUCCESS;
             state.info.text = "parámetro actualizado";
         }
 
