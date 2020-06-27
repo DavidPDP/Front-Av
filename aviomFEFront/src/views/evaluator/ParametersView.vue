@@ -70,12 +70,13 @@
 
 <script>
 import Axios from "axios";
-
-const parameters_url = "evaluator/parameters";
+import { mapGetters, mapActions } from "vuex";
+import { FECTH_PARAMETERS, UPDATE_PARAMETER } from "@/store/actions.type";
 
 export default {
   name: "parametersView",
   computed: {
+    ...mapGetters(["parameters"]),
     requestParams() {
       return {
         headers: {
@@ -83,6 +84,9 @@ export default {
         }
       };
     }
+  },
+  beforeMount() {
+    this.$store.dispatch(FECTH_PARAMETERS, true);
   },
   data() {
     return {
@@ -104,8 +108,7 @@ export default {
         { text: "Valor", align: "center", value: "value" },
         { text: "Activo desde", align: "center", value: "enableStart" },
         { text: "Activo hasta", align: "center", value: "enableEnd" }
-      ],
-      parameters: []
+      ]
     };
   },
   methods: {
@@ -210,27 +213,30 @@ export default {
       "HTTP " + status + " Error al actualizar parametros: " + message;
     },
     onUpdateParameter(parameter, value) {
-      Axios.put(
-        this.$store.state.backend + parameters_url + "/" + parameter.name,
-        {
-          value: value
-        },
-        { headers: this.requestParams.headers }
-      )
-        .then(response => {
-          if (response.status === 200) {
-            this.getParameters();
-            this.snackColor = "success";
-            this.snackText = parameter.name + " ha sido actualizado";
-          }
-        })
-        .catch(err => {
-          this.onUpdateParameterError(err);
-        });
+      let newParameter = {
+        name: parameter.name,
+        value: value
+      };
+      window.console.log(newParameter);
+      this.$store.dispatch(UPDATE_PARAMETER, newParameter);
+      //   Axios.put(
+      //     this.$store.state.backend + parameters_url + "/" + parameter.name,
+      //     {
+      //       value: value
+      //     },
+      //     { headers: this.requestParams.headers }
+      //   )
+      //     .then(response => {
+      //       if (response.status === 200) {
+      //         this.getParameters();
+      //         this.snackColor = "success";
+      //         this.snackText = parameter.name + " ha sido actualizado";
+      //       }
+      //     })
+      //     .catch(err => {
+      //       this.onUpdateParameterError(err);
+      //     });
     }
-  },
-  mounted() {
-    this.getParameters();
   }
 };
 </script>
