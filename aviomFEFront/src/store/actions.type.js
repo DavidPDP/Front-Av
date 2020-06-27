@@ -8,6 +8,10 @@ export const FETCH_EVENTS = "fetchEvents";
 export const FETCH_EVENT_HISTORY = "fecthEventHistory";
 
 
+//Evaluator
+export const SET_EVALUATOR_REQUEST_STATE = "setRequestState"
+
+
 //Evaluator Parameters
 export const FECTH_PARAMETERS = "fetchParameters";
 export const UPDATE_PARAMETER = "updateParameter";

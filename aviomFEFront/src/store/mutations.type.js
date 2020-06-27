@@ -11,7 +11,7 @@ export const SET_EVENT_HISTORY = "setEventHistory";
 
 //Evaluator
 export const MANAGE_EVALUATOR_REQUEST_ERROR = "manageRequestError";
-
+export const UPDATE_EVALUATOR_REQUEST_STATE = "updateRequestState"
 
 //Evaluator parameters
 export const SET_PARAMETERS = "setParameters";

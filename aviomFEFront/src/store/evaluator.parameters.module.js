@@ -2,11 +2,13 @@ import { ParametersService } from "@/common/api.service";
 import {
     SET_PARAMETERS,
     SET_UPDATED_PARAMETER,
-    MANAGE_EVALUATOR_REQUEST_ERROR
+    MANAGE_EVALUATOR_REQUEST_ERROR,
+    UPDATE_EVALUATOR_REQUEST_STATE
 } from "./mutations.type";
 import {
     FECTH_PARAMETERS,
-    UPDATE_PARAMETER
+    UPDATE_PARAMETER,
+    SET_EVALUATOR_REQUEST_STATE
 } from "./actions.type";
 import {
     ERROR, INFO, SUCCESS
@@ -32,6 +34,9 @@ const getters = {
 };
 
 const actions = {
+    [SET_EVALUATOR_REQUEST_STATE](context, info) {
+        context.commit(UPDATE_EVALUATOR_REQUEST_STATE, info);
+    },
     [FECTH_PARAMETERS](context, active) {
         ParametersService.retrieveParameters(active).then(
             ({ data }) => {
@@ -53,6 +58,9 @@ const actions = {
 };
 
 const mutations = {
+    [UPDATE_EVALUATOR_REQUEST_STATE](state, info) {
+        state.info = info;
+    },
     [MANAGE_EVALUATOR_REQUEST_ERROR](state, error) {
         state.info.active = true;
         state.info.infoType = ERROR;
