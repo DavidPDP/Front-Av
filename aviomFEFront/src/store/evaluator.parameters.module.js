@@ -85,7 +85,7 @@ const mutations = {
     [SET_UPDATED_PARAMETER](state, parameter) {
         let found = false;
         let index = -1;
-        for (let i = 0; i < this.parameters.length && !found; i++) {
+        for (let i = 0; i < state.parameters.length && !found; i++) {
             if (state.parameters[i].name === parameter.name) {
                 index = i;
                 found = true;
