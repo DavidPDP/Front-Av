@@ -1,0 +1,239 @@
+<template>
+  <div style="width:100%;height:100%;">
+    <v-flex d-flex wrap xs12 sm12 md12>
+      <v-card width="100%">
+        <v-card-title>
+          Configuraciones del evaluador
+          <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-card-title>
+        <v-data-table
+          :headers="headers"
+          :items="parameters"
+          :search="search"
+          :loading="parameters.length==0"
+          loading-text="Cargando información... Por favor espere"
+        >
+          <template v-slot:item.name="props">{{formatParameterName(props.item)}}</template>
+          <template v-slot:item.enableStart="props">
+            <v-chip color="primary">{{formatDate(props.item.enableStart)}}</v-chip>
+          </template>
+          <template v-slot:item.enableEnd="props">
+            <v-chip
+              v-if="isCurrentlyActive(props.item.enableEnd)"
+              color="success"
+            >{{formatDate(props.item.enableEnd)}}</v-chip>
+            <v-chip v-else color="red" class="white--text">{{formatDate(props.item.enableEnd)}}</v-chip>
+          </template>
+          <template v-slot:item.value="props">
+            <v-edit-dialog
+              @save="save(props.item)"
+              @cancel="cancel"
+              @open="open(props.item)"
+              @close="close"
+            >
+              {{ props.item.value }}
+              <template v-slot:input>
+                <v-text-field
+                  v-if="props.item.name !== periodicityName"
+                  v-model.number="defaultParameterValue"
+                  :rules="[minRules]"
+                  label="Edit"
+                  single-line
+                  counter
+                ></v-text-field>
+                <v-text-field
+                  v-else
+                  v-model.number="defaultParameterValue"
+                  label="Edit"
+                  single-line
+                  counter
+                ></v-text-field>
+              </template>
+            </v-edit-dialog>
+          </template>
+        </v-data-table>
+        <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+          {{ snackText }}
+          <v-btn text @click="snack = false">Close</v-btn>
+        </v-snackbar>
+      </v-card>
+    </v-flex>
+  </div>
+</template>
+
+<script>
+import Axios from "axios";
+
+const parameters_url = "evaluator/parameters";
+
+export default {
+  name: "parametersView",
+  computed: {
+    requestParams() {
+      return {
+        headers: {
+          Authorization: this.$store.state.token
+        }
+      };
+    }
+  },
+  data() {
+    return {
+      periodicityName: "PERIODICIDAD",
+      defaultParameterValue: 0,
+      search: "",
+      snack: false,
+      snackColor: "",
+      snackText: "",
+      minRules: v =>
+        (!!v && parseInt(v) > 0) || "Input too small!" + parseInt(v),
+      pagination: {},
+      headers: [
+        {
+          text: "Parámetro",
+          align: "start",
+          value: "name"
+        },
+        { text: "Valor", align: "center", value: "value" },
+        { text: "Activo desde", align: "center", value: "enableStart" },
+        { text: "Activo hasta", align: "center", value: "enableEnd" }
+      ],
+      parameters: []
+    };
+  },
+  methods: {
+    save(item) {
+      if (
+        this.defaultParameterValue > 0 ||
+        item.name === this.periodicityName
+      ) {
+        if (item.value !== this.defaultParameterValue) {
+          this.onUpdateParameter(item, this.defaultParameterValue);
+        } else {
+          this.snackColor = "success";
+          this.snackText = "El valor del parámetro no cambió";
+        }
+      } else {
+        this.snackColor = "error";
+        this.snackText = "El valor del parámetro debe ser mayor a 0";
+      }
+      this.snack = true;
+      this.defaultParameterValue = 0;
+    },
+    cancel() {
+      this.defaultParameterValue = 0;
+      this.snack = true;
+      this.snackColor = "error";
+      this.snackText = "Cancelado";
+    },
+    open(item) {
+      this.defaultParameterValue = item.value;
+      this.snack = true;
+      this.snackColor = "info";
+      this.snackText = "Cambiando valor";
+    },
+    close() {
+      this.defaultParameterValue = 0;
+    },
+    formatParameterName(item) {
+      //if string contains digits
+      let regx = item.name.match(/\d+/);
+      let name = item.name;
+      let formattedName = name;
+      if (regx) {
+        let digitIndex = item.name.indexOf(regx);
+        formattedName =
+          name.substring(0, digitIndex) +
+          "-" +
+          name.substring(digitIndex, item.name.length);
+      }
+      return formattedName;
+    },
+    isCurrentlyActive(dateStr) {
+      return !dateStr;
+    },
+    formatDate(dateStr) {
+      let formattedDate = "Actualmente activo";
+      if (dateStr) {
+        let date = new Date(dateStr);
+        formattedDate = date.toLocaleString();
+      }
+      return formattedDate;
+    },
+    getParameters() {
+      Axios.get(this.$store.state.backend + parameters_url, {
+        headers: this.requestParams.headers
+      })
+        .then(response => {
+          this.onGetParameters(response);
+        })
+        .catch(err => {
+          this.onGetParametersError(err);
+        });
+    },
+    onGetParameters(axiosResponse) {
+      let parameters = axiosResponse.data;
+      this.parameters = parameters;
+    },
+    onGetParametersError(error) {
+      let errorResponse = !error.response ? error : error.response;
+      let errorData = !errorResponse.data
+        ? { message: "" }
+        : errorResponse.data;
+      let message = errorData.message;
+      let status = !errorResponse.status
+        ? "(Sin definir)"
+        : errorResponse.status;
+      this.snack = true;
+      this.snackColor = "error";
+      this.snackText =
+        "HTTP " + status + " Error al obtener parametros: " + message;
+    },
+    onUpdateParameterError(error) {
+      let errorResponse = !error.response ? error : error.response;
+      let errorData = !errorResponse.data
+        ? { message: "" }
+        : errorResponse.data;
+      let message = errorData.message;
+      let status = !errorResponse.status
+        ? "(Sin definir)"
+        : errorResponse.status;
+      this.snack = true;
+      this.snackColor = "error";
+      "HTTP " + status + " Error al actualizar parametros: " + message;
+    },
+    onUpdateParameter(parameter, value) {
+      Axios.put(
+        this.$store.state.backend + parameters_url + "/" + parameter.name,
+        {
+          value: value
+        },
+        { headers: this.requestParams.headers }
+      )
+        .then(response => {
+          if (response.status === 200) {
+            this.getParameters();
+            this.snackColor = "success";
+            this.snackText = parameter.name + " ha sido actualizado";
+          }
+        })
+        .catch(err => {
+          this.onUpdateParameterError(err);
+        });
+    }
+  },
+  mounted() {
+    this.getParameters();
+  }
+};
+</script>
+
+<style>
+</style>
