@@ -59,7 +59,7 @@
             </v-edit-dialog>
           </template>
         </v-data-table>
-        <v-snackbar v-model="info.active" :timeout="3000" :color="info.infoType">
+        <v-snackbar v-model="info.active" :timeout="3000" :color="info.state">
           {{ info.text }}
           <v-btn text @click="info.active = false">Close</v-btn>
         </v-snackbar>
@@ -74,9 +74,9 @@ import { mapGetters, mapActions } from "vuex";
 import {
   FECTH_PARAMETERS,
   UPDATE_PARAMETER,
-  SET_EVALUATOR_REQUEST_STATE
+  SET_PARAMETERS_REQUEST_STATE
 } from "@/store/actions.type";
-import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states";
+import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states.js";
 
 export default {
   name: "parametersView",
@@ -107,7 +107,11 @@ export default {
   },
   methods: {
     save(item) {
-      let infoState = {};
+      let infoState = {
+        active:false,
+        state:"",
+        text:"",
+      };
       if (
         this.defaultParameterValue > 0 ||
         item.name === this.periodicityName
@@ -115,26 +119,26 @@ export default {
         if (item.value !== this.defaultParameterValue) {
           this.updateParameter(item, this.defaultParameterValue);
         } else {
-          infoState.infoType = SUCCESS;
+          infoState.state = SUCCESS;
           infoState.text = "El valor del parámetro no cambió";
         }
       } else {
-        infoState.infoType = ERROR;
+        infoState.state = ERROR;
         infoState.text = "El valor del parámetro debe ser mayor a 0";
       }
       infoState.active = true;
-      this.$store.dispatch(SET_EVALUATOR_REQUEST_STATE, infoState);
+      this.$store.dispatch(SET_PARAMETERS_REQUEST_STATE, infoState);
       this.defaultParameterValue = 0;
     },
     cancel() {
       this.defaultParameterValue = 0;
-      let infoState = { active: true, infoType: ERROR, text: "Cancelado" };
-      this.$store.dispatch(SET_EVALUATOR_REQUEST_STATE, infoState);
+      let infoState = { active: true, state: ERROR, text: "Cancelado" };
+      this.$store.dispatch(SET_PARAMETERS_REQUEST_STATE, infoState);
     },
     open(item) {
       this.defaultParameterValue = item.value;
-      let infoState = { active: true, infoType: INFO, text: "Cambiando valor" };
-      this.$store.dispatch(SET_EVALUATOR_REQUEST_STATE, infoState);
+      let infoState = { active: true, state: INFO, text: "Cambiando valor" };
+      this.$store.dispatch(SET_PARAMETERS_REQUEST_STATE, infoState);
     },
     close() {
       this.defaultParameterValue = 0;
