@@ -1,7 +1,7 @@
 import { ParametersService } from "@/common/api.service";
 import {
     SET_PARAMETERS,
-    UPDATE_PARAMETER
+    SET_UPDATED_PARAMETER
 } from "./mutations.type";
 import {
     FECTH_PARAMETERS,
@@ -28,10 +28,10 @@ const actions = {
             console.log(error);
         });
     },
-    [UPDATE_PARAMETER](context, parameterName, parameter) {
-        ParametersService.updateParameter(parameterName, parameter).then(
+    [UPDATE_PARAMETER](context, parameter) {
+        ParametersService.updateParameter(parameter).then(
             ({ data }) => {
-                context.commit(UPDATE_PARAMETER, data);
+                context.commit(SET_UPDATED_PARAMETER, data);
             }
         ).catch((error)=>{
             console.log(error);
@@ -45,7 +45,7 @@ const mutations = {
             state.parameters = parameters;
         }
     },
-    [UPDATE_PARAMETER](state, parameter) {
+    [SET_UPDATED_PARAMETER](state, parameter) {
         let found = false;
         let index = -1;
         for (let i = 0; i < this.parameters.length && !found; i++) {
