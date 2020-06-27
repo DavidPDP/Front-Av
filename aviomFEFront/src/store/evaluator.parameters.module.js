@@ -83,20 +83,15 @@ const mutations = {
         }
     },
     [SET_UPDATED_PARAMETER](state, parameter) {
-        let found = false;
-        let index = -1;
-        for (let i = 0; i < state.parameters.length && !found; i++) {
-            if (state.parameters[i].name === parameter.name) {
-                index = i;
-                found = true;
-                state.parameters[i] = parameter;
-            }
-        }
-        if (found) {
+        const index = state.parameters.findIndex(item => item.name === parameter.name);
+        if (index !== -1) {
+
+            state.parameters.splice(index, 1, parameter);
             state.info.active = true;
             state.info.infoType = SUCCESS;
             state.info.text = "parámetro actualizado";
         }
+
     }
 };
 
