@@ -169,7 +169,7 @@ export default {
         name: parameter.name,
         value: value
       };
-      window.console.log(newParameter);
+
       this.$store.dispatch(UPDATE_PARAMETER, newParameter);
     }
   }
