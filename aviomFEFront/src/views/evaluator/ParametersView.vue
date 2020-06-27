@@ -59,9 +59,9 @@
             </v-edit-dialog>
           </template>
         </v-data-table>
-        <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-          {{ snackText }}
-          <v-btn text @click="snack = false">Close</v-btn>
+        <v-snackbar v-model="info.active" :timeout="3000" :color="info.infoType">
+          {{ info.text }}
+          <v-btn text @click="info.active = false">Close</v-btn>
         </v-snackbar>
       </v-card>
     </v-flex>
@@ -71,19 +71,17 @@
 <script>
 import Axios from "axios";
 import { mapGetters, mapActions } from "vuex";
-import { FECTH_PARAMETERS, UPDATE_PARAMETER } from "@/store/actions.type";
+import {
+  FECTH_PARAMETERS,
+  UPDATE_PARAMETER,
+  SET_EVALUATOR_REQUEST_STATE
+} from "@/store/actions.type";
+import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states";
 
 export default {
   name: "parametersView",
   computed: {
-    ...mapGetters(["parameters"]),
-    requestParams() {
-      return {
-        headers: {
-          Authorization: this.$store.state.token
-        }
-      };
-    }
+    ...mapGetters(["parameters", "info"])
   },
   beforeMount() {
     this.$store.dispatch(FECTH_PARAMETERS, true);
@@ -93,12 +91,8 @@ export default {
       periodicityName: "PERIODICIDAD",
       defaultParameterValue: 0,
       search: "",
-      snack: false,
-      snackColor: "",
-      snackText: "",
       minRules: v =>
         (!!v && parseInt(v) > 0) || "Input too small!" + parseInt(v),
-      pagination: {},
       headers: [
         {
           text: "Parámetro",
@@ -113,34 +107,34 @@ export default {
   },
   methods: {
     save(item) {
+      let infoState = {};
       if (
         this.defaultParameterValue > 0 ||
         item.name === this.periodicityName
       ) {
         if (item.value !== this.defaultParameterValue) {
-          this.onUpdateParameter(item, this.defaultParameterValue);
+          this.updateParameter(item, this.defaultParameterValue);
         } else {
-          this.snackColor = "success";
-          this.snackText = "El valor del parámetro no cambió";
+          infoState.infoType = SUCCESS;
+          infoState.text = "El valor del parámetro no cambió";
         }
       } else {
-        this.snackColor = "error";
-        this.snackText = "El valor del parámetro debe ser mayor a 0";
+        infoState.infoType = ERROR;
+        infoState.text = "El valor del parámetro debe ser mayor a 0";
       }
-      this.snack = true;
+      infoState.active = true;
+      this.$store.dispatch(SET_EVALUATOR_REQUEST_STATE, infoState);
       this.defaultParameterValue = 0;
     },
     cancel() {
       this.defaultParameterValue = 0;
-      this.snack = true;
-      this.snackColor = "error";
-      this.snackText = "Cancelado";
+      let infoState = { active: true, infoType: ERROR, text: "Cancelado" };
+      this.$store.dispatch(SET_EVALUATOR_REQUEST_STATE, infoState);
     },
     open(item) {
       this.defaultParameterValue = item.value;
-      this.snack = true;
-      this.snackColor = "info";
-      this.snackText = "Cambiando valor";
+      let infoState = { active: true, infoType: INFO, text: "Cambiando valor" };
+      this.$store.dispatch(SET_EVALUATOR_REQUEST_STATE, infoState);
     },
     close() {
       this.defaultParameterValue = 0;
@@ -170,72 +164,13 @@ export default {
       }
       return formattedDate;
     },
-    getParameters() {
-      Axios.get(this.$store.state.backend + parameters_url, {
-        headers: this.requestParams.headers
-      })
-        .then(response => {
-          this.onGetParameters(response);
-        })
-        .catch(err => {
-          this.onGetParametersError(err);
-        });
-    },
-    onGetParameters(axiosResponse) {
-      let parameters = axiosResponse.data;
-      this.parameters = parameters;
-    },
-    onGetParametersError(error) {
-      let errorResponse = !error.response ? error : error.response;
-      let errorData = !errorResponse.data
-        ? { message: "" }
-        : errorResponse.data;
-      let message = errorData.message;
-      let status = !errorResponse.status
-        ? "(Sin definir)"
-        : errorResponse.status;
-      this.snack = true;
-      this.snackColor = "error";
-      this.snackText =
-        "HTTP " + status + " Error al obtener parametros: " + message;
-    },
-    onUpdateParameterError(error) {
-      let errorResponse = !error.response ? error : error.response;
-      let errorData = !errorResponse.data
-        ? { message: "" }
-        : errorResponse.data;
-      let message = errorData.message;
-      let status = !errorResponse.status
-        ? "(Sin definir)"
-        : errorResponse.status;
-      this.snack = true;
-      this.snackColor = "error";
-      "HTTP " + status + " Error al actualizar parametros: " + message;
-    },
-    onUpdateParameter(parameter, value) {
+    updateParameter(parameter, value) {
       let newParameter = {
         name: parameter.name,
         value: value
       };
       window.console.log(newParameter);
       this.$store.dispatch(UPDATE_PARAMETER, newParameter);
-      //   Axios.put(
-      //     this.$store.state.backend + parameters_url + "/" + parameter.name,
-      //     {
-      //       value: value
-      //     },
-      //     { headers: this.requestParams.headers }
-      //   )
-      //     .then(response => {
-      //       if (response.status === 200) {
-      //         this.getParameters();
-      //         this.snackColor = "success";
-      //         this.snackText = parameter.name + " ha sido actualizado";
-      //       }
-      //     })
-      //     .catch(err => {
-      //       this.onUpdateParameterError(err);
-      //     });
     }
   }
 };
