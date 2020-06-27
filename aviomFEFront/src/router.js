@@ -18,6 +18,11 @@ import Admin from './views/Admin/Admin'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import {OMEGA,CONTROLLER,ADMIN} from "./roles";
 
+//evaluator imports
+import Dashboard from './views/evaluator/dashboard/Dashboard.vue'
+import DashExpression from './views/evaluator/dashExpressions/DashExpressions.vue'
+import ParametersView from './views/evaluator/ParametersView.vue'
+
 export default new Router({
   routes: [
     {
@@ -78,6 +83,21 @@ export default new Router({
           name: 'createevent',
           component: CreateEvent
         },
+        {
+          path: 'dashboard',
+          name: "dashboard",
+          component: Dashboard
+        },
+        {
+          path: 'dashexpressions',
+          name: "dashexpressions",
+          component: DashExpression
+        },
+        {
+          path: 'parameters',
+          name: "parameters",
+          component: ParametersView
+        }
       ]
     },
 
