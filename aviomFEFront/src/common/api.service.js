@@ -11,7 +11,7 @@ const ApiService = {
   },
 
   setHeader() {
-    Vue.axios.defaults.headers.common[ 
+    Vue.axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${JwtService.getToken()}`;
   },
@@ -26,10 +26,10 @@ const ApiService = {
     console.log("URL:");
     console.log(`${resource}/${slug}`);
     return Vue.axios.get(`${resource}/${slug}`, params)
-        .catch(error => {
-            throw new Error(`[RWV] ApiService ${error}`);
-        }
-    );
+      .catch(error => {
+        throw new Error(`[RWV] ApiService ${error}`);
+      }
+      );
   },
 
   post(resource, params) {
@@ -42,10 +42,10 @@ const ApiService = {
 
   delete(resource) {
     return Vue.axios.delete(resource)
-        .catch(error => {
-            throw new Error(`[RWV] ApiService ${error}`);
-        }
-    );
+      .catch(error => {
+        throw new Error(`[RWV] ApiService ${error}`);
+      }
+      );
   }
 };
 
@@ -53,31 +53,44 @@ export default ApiService;
 
 const operatorsResource = "/operators"
 export const OperatorsService = {
-    retrieveAll(online){
-      ApiService.setHeader();
-      return ApiService.query(operatorsResource + "?online=" + online);
-    },
-    retrieveHistory(accountName){
-      ApiService.setHeader();
-      return ApiService.get(operatorsResource, "controllers/" + accountName + "/history");
-    },
-    create(){
-        
-    },
-    
-    update(){
+  retrieveAll(online) {
+    ApiService.setHeader();
+    return ApiService.query(operatorsResource + "?online=" + online);
+  },
+  retrieveHistory(accountName) {
+    ApiService.setHeader();
+    return ApiService.get(operatorsResource, "controllers/" + accountName + "/history");
+  },
+  create() {
 
-    },
+  },
 
-    destroy(){
+  update() {
 
-    }
+  },
+
+  destroy() {
+
+  }
 };
 
 const eventsResource = "/events"
 export const EventsService = {
-    retrieveHistory(accountName){
-      ApiService.setHeader();
-      return ApiService.get(eventsResource, "controllers/" + accountName + "/history");
-    }
+  retrieveHistory(accountName) {
+    ApiService.setHeader();
+    return ApiService.get(eventsResource, "controllers/" + accountName + "/history");
+  }
 };
+
+
+const evaluatorParametersResource = "/evaluator/parameters"
+export const ParametersService = {
+  retrieveParameters() {
+    ApiService.setHeader();
+    return ApiService.get(evaluatorParametersResource, "active");
+  },
+  updateParameter(parameterName, parameter) {
+    ApiService.setHeader();
+    return ApiService.update(evaluatorParametersResource, parameterName, parameter);
+  }
+}
