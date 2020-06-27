@@ -1,21 +1,34 @@
 import { ParametersService } from "@/common/api.service";
 import {
     SET_PARAMETERS,
-    SET_UPDATED_PARAMETER
+    SET_UPDATED_PARAMETER,
+    MANAGE_PARAMETERS_REQUEST_ERROR
 } from "./mutations.type";
 import {
     FECTH_PARAMETERS,
     UPDATE_PARAMETER
 } from "./actions.type";
+import {
+    ERROR, INFO, SUCCESS
+} from "@/common/evaluator.transtaction.states";
+
 
 const state = {
     parameters: [],
+    info: {
+        active: false,
+        infoType: "",
+        text: "",
+    }
 };
 
 const getters = {
     parameters(state) {
         return state.parameters;
     },
+    info(state) {
+        return state.info;
+    }
 };
 
 const actions = {
@@ -25,7 +38,7 @@ const actions = {
                 context.commit(SET_PARAMETERS, data);
             }
         ).catch((error) => {
-            console.log(error);
+            context.commit(MANAGE_PARAMETERS_REQUEST_ERROR, error)
         });
     },
     [UPDATE_PARAMETER](context, parameter) {
@@ -33,16 +46,32 @@ const actions = {
             ({ data }) => {
                 context.commit(SET_UPDATED_PARAMETER, data);
             }
-        ).catch((error)=>{
-            console.log(error);
+        ).catch((error) => {
+            context.commit(MANAGE_PARAMETERS_REQUEST_ERROR, error)
         })
     }
 };
 
 const mutations = {
+    [MANAGE_PARAMETERS_REQUEST_ERROR](state, error) {
+        state.info.active = true;
+        state.info.infoType = ERROR;
+        let text = "";
+        if (!error.response) {
+            text = "Error: " + error;
+        } else if (!error.response.message) {
+            text = "Error: " + error.response;
+        } else {
+            text = error.response.message;
+        }
+        state.info.text = text;
+    },
     [SET_PARAMETERS](state, parameters) {
         if (parameters != null) {
             state.parameters = parameters;
+            state.info.active = true;
+            state.info.infoType = SUCCESS;
+            state.info.text = "parámetros obtenidos";
         }
     },
     [SET_UPDATED_PARAMETER](state, parameter) {
@@ -54,6 +83,11 @@ const mutations = {
                 found = true;
                 state.parameters[i] = parameter;
             }
+        }
+        if (found) {
+            state.info.active = true;
+            state.info.infoType = SUCCESS;
+            state.info.text = "parámetro actualizado";
         }
     }
 };
