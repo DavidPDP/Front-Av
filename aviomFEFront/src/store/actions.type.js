@@ -7,6 +7,10 @@ export const FETCH_OPERATOR_HISTORY = "fecthOperatorHistory";
 export const FETCH_EVENTS = "fetchEvents";
 export const FETCH_EVENT_HISTORY = "fecthEventHistory";
 
+//Evaluator dashboard
+export const FETCH_KPIS = "fetchKPIS";
+export const SET_LASTS_KPIS = "setLastsKPIS";
+export const SET_DASHBOARD_REQUEST_STATE = "setDashboardRequestState"
 
 //Evaluator expressions
 export const FETCH_VARIABLES = "fetchVariables";

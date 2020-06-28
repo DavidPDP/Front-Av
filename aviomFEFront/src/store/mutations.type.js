@@ -8,6 +8,11 @@ export const SET_OPERATOR_HISTORY = "setOperatorHistory";
 export const ADD_EVENT = "addEvent";
 export const SET_EVENT_HISTORY = "setEventHistory";
 
+//Evaluator dashboard
+export const SET_KPIS = "setKPIS";
+export const ADD_LASTS_KPIS = "addLastsKPIS";
+export const MANAGE_DASHBOARD_REQUEST_ERROR = "manageRequestError";
+export const UPDATE_DASHBOARD_REQUEST_STATE = "updateRequestState"
 
 //Evaluator console
 export const SET_VARIABLES = "setVariables";
