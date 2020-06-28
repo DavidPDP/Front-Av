@@ -65,8 +65,9 @@ import {
   UPDATE_VARIABLE,
   ADD_VARIABLE,
   SET_EXPRESSIONS_REQUEST_STATE,
-  FETCH_FUNCTIONS,
+  FETCH_FUNCTIONS
 } from "@/store/actions.type";
+import { MANAGE_EXPRESSIONS_REQUEST_ERROR } from "@/store/mutations.type";
 import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states.js";
 import { ExpressionsService } from "@/common/api.service";
 import splitPane from "vue-splitpane";
@@ -154,12 +155,12 @@ export default {
         let response = err.response;
         //BAD REQUEST
         if (!response.status || response.status !== 400) {
-          this.$store.dispatch(MANAGE_EXPRESSIONS_REQUEST_ERROR, err);
+          this.$store.commit(MANAGE_EXPRESSIONS_REQUEST_ERROR, err);
         } else if (response.status === 400) {
           this.onEvaluatedExpression(response);
         }
       } else {
-        this.$store.dispatch(MANAGE_EXPRESSIONS_REQUEST_ERROR, err);
+        this.$store.commit(MANAGE_EXPRESSIONS_REQUEST_ERROR, err);
       }
     },
     createLocalVariable(event) {
