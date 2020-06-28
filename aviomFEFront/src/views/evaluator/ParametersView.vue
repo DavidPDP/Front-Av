@@ -21,15 +21,15 @@
           loading-text="Cargando información... Por favor espere"
         >
           <template v-slot:item.name="props">{{formatParameterName(props.item)}}</template>
-          <template v-slot:item.enableStart="props">
-            <v-chip color="primary">{{formatDate(props.item.enableStart)}}</v-chip>
+          <template v-slot:item.enable_start="props">
+            <v-chip color="primary">{{formatDate(props.item.enable_start)}}</v-chip>
           </template>
-          <template v-slot:item.enableEnd="props">
+          <template v-slot:item.enable_end="props">
             <v-chip
-              v-if="isCurrentlyActive(props.item.enableEnd)"
+              v-if="isCurrentlyActive(props.item.enable_end)"
               color="success"
-            >{{formatDate(props.item.enableEnd)}}</v-chip>
-            <v-chip v-else color="red" class="white--text">{{formatDate(props.item.enableEnd)}}</v-chip>
+            >{{formatDate(props.item.enable_end)}}</v-chip>
+            <v-chip v-else color="red" class="white--text">{{formatDate(props.item.enable_end)}}</v-chip>
           </template>
           <template v-slot:item.value="props">
             <v-edit-dialog
@@ -100,8 +100,8 @@ export default {
           value: "name"
         },
         { text: "Valor", align: "center", value: "value" },
-        { text: "Activo desde", align: "center", value: "enableStart" },
-        { text: "Activo hasta", align: "center", value: "enableEnd" }
+        { text: "Activo desde", align: "center", value: "enable_start" },
+        { text: "Activo hasta", align: "center", value: "enable_end" }
       ]
     };
   },
