@@ -71,7 +71,7 @@
         </template>
 
         <!-- Formula expression template -->
-        <template v-slot:item.formulaExpression="props">
+        <template v-slot:item.formula_expression="props">
           <v-menu
             :close-on-click="true"
             :close-on-content-click="false"
@@ -95,7 +95,7 @@
                     readonly
                     full-width
                     row-height="25"
-                    :value="props.item.formulaExpression"
+                    :value="props.item.formula_expression"
                   ></v-textarea>
                 </v-list-item>
               </v-list>
@@ -103,11 +103,9 @@
           </v-menu>
         </template>
         <!-- Type template -->
-        <template v-slot:item.type="props">
+        <template v-slot:item.is_kpi="props">
           <v-checkbox
-            v-model="props.item.type"
-            v-bind:true-value="varTypes.kpi"
-            v-bind:false-value="varTypes.no_kpi"
+            v-model="props.item.is_kpi"
             readonly
             label="KPI"
             color="success"
@@ -115,7 +113,7 @@
         </template>
         <!-- Actions template -->
         <template v-slot:item.actions="{item}">
-          <div v-if="item.type!==varTypes.system">
+          <div v-if="item.classification!==system_var_classification">
             <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
           </div>
         </template>
@@ -157,18 +155,16 @@
                 append-icon="mdi-variable"
                 class="mx-2"
                 placeholder="expresión"
-                v-model="toAddVariable.formulaExpression"
+                v-model="toAddVariable.formula_expression"
                 :rules="noEmptyRules"
                 clearable
                 clear-icon="cancel"
                 required
-                :value="transformExpression(toAddVariable.formulaExpression)"
+                :value="transformExpression(toAddVariable.formula_expression)"
               ></v-textarea>
 
               <v-checkbox
-                v-model="toAddVariable.type"
-                v-bind:true-value="varTypes.kpi"
-                v-bind:false-value="varTypes.no_kpi"
+                v-model="toAddVariable.is_kpi"
                 color="success"
                 label="Agregar al cálculo programado (es KPI)."
               ></v-checkbox>
@@ -188,7 +184,8 @@
 </template>
 
 <script>
-const varTypes = { kpi: "kpi", no_kpi: "no_kpi", system: "system" };
+import { mapGetters } from "vuex";
+const SYSTEM_VAR_CLASSIFICATION="Variable del sistema";
 const addVariableEvent = "addVariable";
 const variableEventInfo = "showVariableEventInfo";
 const updateVariableEvent = "updateVariable";
@@ -198,11 +195,13 @@ export default {
   name: "variables",
   props: {
     height: String,
-    variablesInfo: Array
+  },
+  computed:{
+    ...mapGetters(["variablesInfo"]),
   },
   data() {
     return {
-      varTypes: varTypes,
+      system_var_classification:SYSTEM_VAR_CLASSIFICATION,
       variableDialog: false,
       variableDialogEvent: addVariableEvent,
       search: "",
@@ -213,8 +212,8 @@ export default {
         name: "",
         description: "",
         classification: "",
-        formulaExpression: "",
-        type: varTypes.no_kpi
+        formula_expression: "",
+        is_kpi: false
       },
       headers: [
         {
@@ -225,8 +224,8 @@ export default {
         },
         { text: "Clasificación", value: "classification", filterable: false },
         { text: "Descripción", value: "description", filterable: false },
-        { text: "Expresión", value: "formulaExpression", filterable: false },
-        { text: "Tipo", value: "type", filterable: false },
+        { text: "Expresión", value: "formula_expression", filterable: false },
+        { text: "Tipo", value: "is_kpi", filterable: false },
         { text: "Actions", value: "actions", sortable: false }
       ]
     };
@@ -266,8 +265,8 @@ export default {
         name: "",
         description: "",
         classification: "",
-        formulaExpression: "",
-        type: this.varTypes.no_kpi
+        formula_expression: "",
+        is_kpi: false
       };
       this.variableDialog = false;
     }
