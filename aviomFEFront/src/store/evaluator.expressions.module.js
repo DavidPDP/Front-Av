@@ -31,8 +31,11 @@ const getDefaultState = () => {
 const state = getDefaultState();
 
 const getters = {
-    parameters(state) {
-        return state.parameters;
+    variables(state) {
+        return state.variables;
+    },
+    functionsInfo(state) {
+        return state.functionsInfo;
     },
     info(state) {
         return state.info;
