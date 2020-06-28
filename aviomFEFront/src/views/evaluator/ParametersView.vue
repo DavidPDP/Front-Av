@@ -69,7 +69,6 @@
 </template>
 
 <script>
-import Axios from "axios";
 import { mapGetters } from "vuex";
 import {
   FETCH_PARAMETERS,

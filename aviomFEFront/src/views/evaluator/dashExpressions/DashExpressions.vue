@@ -77,17 +77,12 @@ import Console from "./views/Console.vue";
 
 export default {
   data: () => ({
-    loading: false,
-    snack: false,
-    snackColor: "",
-    snackText: "",
     rightPaneIsShowed: true,
     items: [
       { title: "Home", icon: "mdi-home-city" },
       { title: "My Account", icon: "mdi-account" },
       { title: "Users", icon: "mdi-account-group-outline" }
     ],
-    drawer: null,
     functionsIsShowed: true,
     variablesIsShowed: true,
     evaluatedExpressions: [],
