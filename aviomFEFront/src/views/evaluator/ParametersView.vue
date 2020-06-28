@@ -72,7 +72,7 @@
 import Axios from "axios";
 import { mapGetters, mapActions } from "vuex";
 import {
-  FECTH_PARAMETERS,
+  FETCH_PARAMETERS,
   UPDATE_PARAMETER,
   SET_PARAMETERS_REQUEST_STATE
 } from "@/store/actions.type";
@@ -84,7 +84,7 @@ export default {
     ...mapGetters(["parameters", "info"])
   },
   beforeMount() {
-    this.$store.dispatch(FECTH_PARAMETERS, true);
+    this.$store.dispatch(FETCH_PARAMETERS, true);
   },
   data() {
     return {

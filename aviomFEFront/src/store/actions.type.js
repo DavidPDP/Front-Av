@@ -17,6 +17,6 @@ export const SET_EXPRESSIONS_REQUEST_STATE = "setVariablesRequestState"
 
 
 //Evaluator Parameters
-export const FECTH_PARAMETERS = "fetchParameters";
+export const FETCH_PARAMETERS = "fetchParameters";
 export const UPDATE_PARAMETER = "updateParameter";
 export const SET_PARAMETERS_REQUEST_STATE = "setParametersRequestState"
