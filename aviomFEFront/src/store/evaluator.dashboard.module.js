@@ -7,7 +7,6 @@ import {
 } from "./mutations.type";
 import {
     FETCH_KPIS,
-    SET_LASTS_KPIS,
     SET_DASHBOARD_REQUEST_STATE
 } from "./actions.type";
 import {
@@ -51,9 +50,6 @@ const actions = {
             context.commit(MANAGE_DASHBOARD_REQUEST_ERROR, error)
         });
     },
-    [SET_LASTS_KPIS](context, kpis) {
-        context.commit(ADD_LASTS_KPIS,kpis);
-    }
 };
 
 const mutations = {
