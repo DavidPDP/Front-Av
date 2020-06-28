@@ -70,7 +70,7 @@
 
 <script>
 import Axios from "axios";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 import {
   FETCH_PARAMETERS,
   UPDATE_PARAMETER,
