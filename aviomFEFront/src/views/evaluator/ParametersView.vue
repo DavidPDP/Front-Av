@@ -83,7 +83,7 @@ export default {
   computed: {
     ...mapGetters(["parameters", "info"])
   },
-  beforeMount() {
+  beforeCreate() {
     this.$store.dispatch(FETCH_PARAMETERS, true);
   },
   data() {

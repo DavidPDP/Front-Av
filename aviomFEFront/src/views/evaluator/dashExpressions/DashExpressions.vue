@@ -102,7 +102,7 @@ export default {
   computed: {
     ...mapGetters(["expressions_info"])
   },
-  beforeMount() {
+  beforeCreate() {
     this.$store.dispatch(FETCH_VARIABLES);
     this.$store.dispatch(FETCH_FUNCTIONS);
   },
