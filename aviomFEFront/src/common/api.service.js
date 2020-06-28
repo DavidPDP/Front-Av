@@ -132,7 +132,7 @@ export const ExpressionsService = {
 }
 
 const evaluatorMeasurementsResource = "/evaluator/measurements";
-const NAME_REQUEST_PARAM = "name";
+const NAMES_REQUEST_PARAM = "names";
 const LASTS_REQUEST_PARAM = "lasts";
 const START_DATE_REQUEST_PARAM = "s_date";
 const END_DATE_REQUEST_PARAM = "e_date";
@@ -140,19 +140,25 @@ export const MeasurementsService = {
   retrieveKPIS(kpiNames, lasts, s_date, e_date) {
     // ApiService.setHeader();
     let promise = {};
+    let namesQueryParam = this.toListRequestParam(NAMES_REQUEST_PARAM, kpiNames);
+    let uriQueryParams = "";
     if (lasts) {
-      promise = ApiService.query(evaluatorExpressionsResource + "?" + LASTS_REQUEST_PARAM + "=true");
+      uriQueryParams = this.toUri([namesQueryParam, LASTS_REQUEST_PARAM + "=true"]);
     } else if (s_date && e_date) {
-      promise = ApiService.query(evaluatorExpressionsResource + "?" + START_DATE_REQUEST_PARAM + "=" + s_date.toLocaleDateString(), e_date.toLocaleDateString());
+      uriQueryParams = this.toUri([namesQueryParam, START_DATE_REQUEST_PARAM + "=" + s_date, END_DATE_REQUEST_PARAM + "=" + e_date]);
     } else {
-      promise = ApiService.query(evaluatorMeasurementsResource + this.toListRequestParam(NAME_REQUEST_PARAM, kpiNames));
+      uriQueryParams = this.toUri([namesQueryParam]);
     }
-
+    promise = ApiService.query(evaluatorMeasurementsResource + uriQueryParams);
     return promise;
   },
 
   toListRequestParam(name, values) {
     return name + "=" + values.join(",");
+  },
+
+  toUri(queryParams) {
+    return "?" + queryParams.join("&");
   }
 
 }
