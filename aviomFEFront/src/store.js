@@ -5,6 +5,7 @@ import operators from "@/store/operators.module";
 import events from "@/store/events.module";
 import evalParameters from "@/store/evaluator.parameters.module";
 import expressions from "@/store/evaluator.expressions.module";
+import dashboard from "@/store/evaluator.dashboard.module";
 
 Vue.use(Vuex);
 
@@ -24,7 +25,8 @@ export default new Vuex.Store({
     operators,
     events,
     evalParameters,
-    expressions
+    expressions,
+    dashboard
   },
   plugins:[createPersistedState()],
   state: {
