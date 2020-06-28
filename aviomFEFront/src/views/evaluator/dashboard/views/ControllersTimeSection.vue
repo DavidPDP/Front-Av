@@ -92,7 +92,7 @@ export default {
     onlineControllers: [],
     KPI: {
       controllersOccupationTime: {
-        kpiName: "u",
+        kpiName: "p",
         title: "Ocupación de los controladores",
         labels: ["Disponible", "Ocupado"],
         icons: ["mdi-laptop", "mdi-cancel"],
