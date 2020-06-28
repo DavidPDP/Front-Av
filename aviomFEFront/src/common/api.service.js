@@ -118,6 +118,6 @@ const evaluatorExpressionsResource = "/evaluator/expressions"
 export const ExpressionsService = {
   retrieveFunctions() {
     // ApiService.setHeader();
-    return ApiService.get(evaluatorExpressionsResource, "/functions");
+    return ApiService.get(evaluatorExpressionsResource, "functions");
   }
 }
