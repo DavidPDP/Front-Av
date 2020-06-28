@@ -108,7 +108,7 @@ export const VariablesService = {
 
 
   },
-  addVariable(variable){
+  addVariable(variable) {
     return ApiService.post(evaluatorVariablesResource, variable);
   },
   updateVariable(variable) {
@@ -124,9 +124,23 @@ export const ExpressionsService = {
     return ApiService.get(evaluatorExpressionsResource, "functions");
   },
 
-  evaluateExpression(expression){
+  evaluateExpression(expression) {
     // ApiService.setHeader();
-    return ApiService.post(evaluatorExpressionsResource,{expression:expression});
+    return ApiService.post(evaluatorExpressionsResource, { expression: expression });
+  }
+
+}
+
+const evaluatorMeasurementsResource = "/evaluator/measurements";
+const NAME_REQUEST_PARAM = "name";
+export const MeasurementsService = {
+  retrieveKPIS(kpiNames) {
+    // ApiService.setHeader();
+    return ApiService.query(evaluatorMeasurementsResource + this.toListRequestParam(NAME_REQUEST_PARAM, kpiNames));
+  },
+
+  toListRequestParam(name, values) {
+    return name + "=" + values.join(",");
   }
 
 }
