@@ -1,4 +1,4 @@
-import { VariablesService,ExpressionsService } from "@/common/api.service";
+import { VariablesService, ExpressionsService } from "@/common/api.service";
 import {
     SET_VARIABLES,
     SET_UPDATED_VARIABLE,
@@ -19,7 +19,7 @@ import {
 const getDefaultState = () => {
     return {
         variables: [],
-        functions:[],
+        functionsInfo: [],
         info: {
             active: false,
             state: "",
@@ -104,7 +104,14 @@ const mutations = {
             state.info.state = SUCCESS;
             state.info.text = "variable actualizada";
         }
-
+    },
+    [SET_FUNCTIONS](state, functions) {
+        if (functions != null) {
+            state.functionsInfo = functions;
+            state.info.active = true;
+            state.info.state = INFO;
+            state.info.text = "funciones obtenidas";
+        }
     }
 };
 
