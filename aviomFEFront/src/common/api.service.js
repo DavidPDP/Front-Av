@@ -108,6 +108,9 @@ export const VariablesService = {
 
 
   },
+  addVariable(variable){
+    return ApiService.post(evaluatorVariablesResource, variable);
+  },
   updateVariable(variable) {
     // ApiService.setHeader();
     return ApiService.update(evaluatorVariablesResource, variable.name, variable);
@@ -119,5 +122,11 @@ export const ExpressionsService = {
   retrieveFunctions() {
     // ApiService.setHeader();
     return ApiService.get(evaluatorExpressionsResource, "functions");
+  },
+
+  evaluateExpression(expression){
+    // ApiService.setHeader();
+    return ApiService.post(evaluatorExpressionsResource,{expression:expression});
   }
+
 }
