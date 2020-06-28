@@ -18,7 +18,7 @@ import {
 
 const getDefaultState = () => {
     return {
-        variables: [],
+        variablesInfo: [],
         functionsInfo: [],
         info: {
             active: false,
