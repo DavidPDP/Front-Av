@@ -2,12 +2,14 @@ import { VariablesService, ExpressionsService } from "@/common/api.service";
 import {
     SET_VARIABLES,
     SET_UPDATED_VARIABLE,
+    SET_ADDED_VARIABLE,
     SET_FUNCTIONS,
     MANAGE_EXPRESSIONS_REQUEST_ERROR,
     UPDATE_EXPRESSIONS_REQUEST_STATE
 } from "./mutations.type";
 import {
     FETCH_VARIABLES,
+    ADD_VARIABLE,
     UPDATE_VARIABLE,
     FETCH_FUNCTIONS,
     SET_EXPRESSIONS_REQUEST_STATE
@@ -50,6 +52,15 @@ const actions = {
         VariablesService.retrieveVariables().then(
             ({ data }) => {
                 context.commit(SET_VARIABLES, data);
+            }
+        ).catch((error) => {
+            context.commit(MANAGE_EXPRESSIONS_REQUEST_ERROR, error)
+        });
+    },
+    [ADD_VARIABLE](context, variable) {
+        VariablesService.addVariable(variable).then(
+            ({ data }) => {
+                context.commit(SET_ADDED_VARIABLE, data);
             }
         ).catch((error) => {
             context.commit(MANAGE_EXPRESSIONS_REQUEST_ERROR, error)
@@ -98,6 +109,12 @@ const mutations = {
             state.expressions_info.state = INFO;
             state.expressions_info.text = "variables obtenidos";
         }
+    },
+    [SET_ADDED_VARIABLE](state, variableInfo) {
+        state.variablesInfo.push(variableInfo);
+        state.expressions_info.active = true;
+        state.expressions_info.state = SUCCESS;
+        state.expressions_info.text = "variable agregada";
     },
     [SET_UPDATED_VARIABLE](state, variableInfo) {
         const index = state.variablesInfo.findIndex(item => item.name === variableInfo.name);

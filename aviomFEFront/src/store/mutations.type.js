@@ -11,6 +11,7 @@ export const SET_EVENT_HISTORY = "setEventHistory";
 
 //Evaluator console
 export const SET_VARIABLES = "setVariables";
+export const SET_ADDED_VARIABLE="setAddedVariable";
 export const SET_UPDATED_VARIABLE = "setUpdatedVariable";
 export const SET_FUNCTIONS = "setFunctions";
 export const MANAGE_EXPRESSIONS_REQUEST_ERROR = "manageRequestError";
