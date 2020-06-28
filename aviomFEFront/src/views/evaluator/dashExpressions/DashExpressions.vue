@@ -46,7 +46,6 @@
             <Functions
               v-show="functionsIsShowed"
               :height="functionsIsShowed&&!variablesIsShowed?$vuetify.breakpoint.height+'px':($vuetify.breakpoint.height/3).toFixed(0)+'px'"
-              :functionsInfo="functionsInfo"
             ></Functions>
           </div>
         </template>
@@ -61,6 +60,14 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+import {
+  FETCH_VARIABLES,
+  UPDATE_VARIABLE,
+  SET_EXPRESSIONS_REQUEST_STATE,
+  FETCH_FUNCTIONS
+} from "@/store/actions.type";
+import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states.js";
 import splitPane from "vue-splitpane";
 import Variables from "./views/Variables.vue";
 import Functions from "./views/Functions.vue";
@@ -97,14 +104,8 @@ export default {
     splitPane,
     Functions
   },
-  computed: {
-    requestParams() {
-      return {
-        headers: {
-          Authorization: this.$store.state.token
-        }
-      };
-    }
+  beforeMount(){
+    this.$store.dispatch(FETCH_FUNCTIONS);
   },
   methods: {
     showRightPane(value) {
@@ -264,10 +265,6 @@ export default {
       this.evaluatedExpressions.unshift(expressionWrapper);
     }
   },
-  mounted() {
-    this.getVariablesInfo();
-    this.getFunctionsInfo();
-  }
 };
 </script>
 

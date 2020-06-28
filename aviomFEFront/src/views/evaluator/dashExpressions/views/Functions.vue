@@ -137,11 +137,11 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "functions",
   props: {
     height: String,
-    functionsInfo: Array
   },
   data() {
     return {
@@ -159,6 +159,9 @@ export default {
         { text: "Otros", value: "extra" }
       ]
     };
+  },
+  computed:{
+    ...mapGetters(["functionsInfo"]),
   },
   methods: {
     formatType(type) {
