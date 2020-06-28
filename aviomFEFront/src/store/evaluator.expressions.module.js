@@ -20,7 +20,7 @@ const getDefaultState = () => {
     return {
         variablesInfo: [],
         functionsInfo: [],
-        info: {
+        expressions_info: {
             active: false,
             state: "",
             text: "",
@@ -31,14 +31,14 @@ const getDefaultState = () => {
 const state = getDefaultState();
 
 const getters = {
-    variables(state) {
-        return state.variables;
+    variablesInfo(state) {
+        return state.variablesInfo;
     },
     functionsInfo(state) {
         return state.functionsInfo;
     },
-    info(state) {
-        return state.info;
+    expressions_info(state) {
+        return state.expressions_info;
     }
 };
 
@@ -76,11 +76,11 @@ const actions = {
 
 const mutations = {
     [UPDATE_EXPRESSIONS_REQUEST_STATE](state, info) {
-        state.info = info;
+        state.expressions_info = info;
     },
     [MANAGE_EXPRESSIONS_REQUEST_ERROR](state, error) {
-        state.info.active = true;
-        state.info.state = ERROR;
+        state.expressions_info.active = true;
+        state.expressions_info.state = ERROR;
         let text = "";
         if (!error.response) {
             text = "Error: " + error;
@@ -89,31 +89,31 @@ const mutations = {
         } else {
             text = error.response.message;
         }
-        state.info.text = text;
+        state.expressions_info.text = text;
     },
-    [SET_VARIABLES](state, variables) {
-        if (variables != null) {
-            state.variables = variables;
-            state.info.active = true;
-            state.info.state = INFO;
-            state.info.text = "variables obtenidos";
+    [SET_VARIABLES](state, variablesInfo) {
+        if (variablesInfo != null) {
+            state.variablesInfo = variablesInfo;
+            state.expressions_info.active = true;
+            state.expressions_info.state = INFO;
+            state.expressions_info.text = "variables obtenidos";
         }
     },
-    [SET_UPDATED_VARIABLE](state, variable) {
-        const index = state.variables.findIndex(item => item.name === variable.name);
+    [SET_UPDATED_VARIABLE](state, variableInfo) {
+        const index = state.variablesInfo.findIndex(item => item.name === variableInfo.name);
         if (index !== -1) {
-            state.variables.splice(index, 1, variable);
-            state.info.active = true;
-            state.info.state = SUCCESS;
-            state.info.text = "variable actualizada";
+            state.variablesInfo.splice(index, 1, variableInfo);
+            state.expressions_info.active = true;
+            state.expressions_info.state = SUCCESS;
+            state.expressions_info.text = "variable actualizada";
         }
     },
     [SET_FUNCTIONS](state, functions) {
         if (functions != null) {
             state.functionsInfo = functions;
-            state.info.active = true;
-            state.info.state = INFO;
-            state.info.text = "funciones obtenidas";
+            state.expressions_info.active = true;
+            state.expressions_info.state = INFO;
+            state.expressions_info.text = "funciones obtenidas";
         }
     }
 };
