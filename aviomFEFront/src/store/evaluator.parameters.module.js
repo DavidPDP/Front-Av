@@ -6,7 +6,7 @@ import {
     MANAGE_PARAMETERS_REQUEST_ERROR
 } from "./mutations.type";
 import {
-    FECTH_PARAMETERS,
+    FETCH_PARAMETERS,
     UPDATE_PARAMETER,
     SET_PARAMETERS_REQUEST_STATE
 } from "./actions.type";
@@ -40,7 +40,7 @@ const actions = {
     [SET_PARAMETERS_REQUEST_STATE](context, info) {
         context.commit(UPDATE_PARAMETERS_REQUEST_STATE, info);
     },
-    [FECTH_PARAMETERS](context, active) {
+    [FETCH_PARAMETERS](context, active) {
         ParametersService.retrieveParameters(active).then(
             ({ data }) => {
                 context.commit(SET_PARAMETERS, data);
