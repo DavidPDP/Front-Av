@@ -1,15 +1,17 @@
 import { NOTIFICATION_API_URL } from "@/common/settings.service";
-import { ADD_CONTROLLER } from "@/store/mutations.type";
+import { ADD_CONTROLLER, ADD_LASTS_KPIS } from "@/store/mutations.type";
 import Stomp from "webstomp-client";
 import store from '@/store';
 
 //Protocol constants
-const NEW_EVENT_ENTITY="";
-const NEW_AVAILABLE_CONTROLLER="New_Available_Controller";
-const NEW_EVENT_ASSIGMENT="";
+const NEW_EVENT_ENTITY = "";
+const NEW_AVAILABLE_CONTROLLER = "New_Available_Controller";
+const NEW_EVENT_ASSIGMENT = "";
+//evalautor
+const NEW_MEASUREMENTS_CALCULATED = "New_Measurements_Calculated"
 
 //Bussines functions
-function init(){
+function init() {
     if (!("Notification" in window)) {
         alert("This browser does not support desktop notification");
     } else {
@@ -26,24 +28,27 @@ const NotificationManager = {
 
         //the version to be used is defined by the client.
         //Note: use protocol version greater than 1.0, because 1.0 doesn't contain the heartbeat
-        const options = { debug: true, protocols: ["v11.stomp"]};
+        const options = { debug: true, protocols: ["v11.stomp"] };
         const connection = Stomp.client(NOTIFICATION_API_URL, options);
-        
+
         connection.connect(
             {}, //credentials need to be added to the service.
             (frame) => {
                 connection.subscribe(topic, (tick) => {
 
                     let body = JSON.parse(tick.body);
-                    
-                    if(body.cause == NEW_AVAILABLE_CONTROLLER){
+
+                    if (body.cause == NEW_AVAILABLE_CONTROLLER) {
                         store.commit(ADD_CONTROLLER, body.content[0]);
                     }
-                    
+                    if (body.cause == NEW_MEASUREMENTS_CALCULATED) {
+                        store.commit(ADD_LASTS_KPIS, body.content[0]);
+                    }
+
                 });
             },
             (error) => {
-            
+
             }
         )
     }
