@@ -133,10 +133,22 @@ export const ExpressionsService = {
 
 const evaluatorMeasurementsResource = "/evaluator/measurements";
 const NAME_REQUEST_PARAM = "name";
+const LASTS_REQUEST_PARAM = "lasts";
+const START_DATE_REQUEST_PARAM = "s_date";
+const END_DATE_REQUEST_PARAM = "e_date";
 export const MeasurementsService = {
-  retrieveKPIS(kpiNames) {
+  retrieveKPIS(kpiNames, lasts, s_date, e_date) {
     // ApiService.setHeader();
-    return ApiService.query(evaluatorMeasurementsResource + this.toListRequestParam(NAME_REQUEST_PARAM, kpiNames));
+    let promise = {};
+    if (lasts) {
+      promise = ApiService.query(evaluatorExpressionsResource + "?" + LASTS_REQUEST_PARAM + "=true");
+    } else if (s_date && e_date) {
+      promise = ApiService.query(evaluatorExpressionsResource + "?" + START_DATE_REQUEST_PARAM + "=" + s_date.toLocaleDateString(), e_date.toLocaleDateString());
+    } else {
+      promise = ApiService.query(evaluatorMeasurementsResource + this.toListRequestParam(NAME_REQUEST_PARAM, kpiNames));
+    }
+
+    return promise;
   },
 
   toListRequestParam(name, values) {
