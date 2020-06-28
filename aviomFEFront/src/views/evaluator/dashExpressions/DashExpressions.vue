@@ -36,7 +36,6 @@
             <Variables
               class="mb-2"
               v-show="variablesIsShowed"
-              :variablesInfo="variablesInfo"
               @updateVariable="updateVariable($event)"
               @addVariable="addVariable($event)"
               @showVariableEventInfo="showVariableEventInfo($event)"
@@ -52,8 +51,8 @@
       </splitPane>
     </div>
 
-    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-      {{ snackText }}
+    <v-snackbar v-model="expressions_info.active" :timeout="3000" :color="expressions_info.state">
+      {{ expressions_info.text }}
       <v-btn text @click="snack = false">Close</v-btn>
     </v-snackbar>
   </div>
@@ -64,19 +63,17 @@ import { mapGetters, mapActions } from "vuex";
 import {
   FETCH_VARIABLES,
   UPDATE_VARIABLE,
+  ADD_VARIABLE,
   SET_EXPRESSIONS_REQUEST_STATE,
-  FETCH_FUNCTIONS
+  FETCH_FUNCTIONS,
+  MANAGE_EXPRESSIONS_REQUEST_ERROR
 } from "@/store/actions.type";
 import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states.js";
+import { ExpressionsService } from "@/common/api.service";
 import splitPane from "vue-splitpane";
 import Variables from "./views/Variables.vue";
 import Functions from "./views/Functions.vue";
 import Console from "./views/Console.vue";
-import Axios from "axios";
-
-const expressions_url = "evaluator/evaluateExpression";
-const variables_url = "evaluator/variables";
-const functions_url = "evaluator/functions";
 
 export default {
   data: () => ({
@@ -93,8 +90,6 @@ export default {
     drawer: null,
     functionsIsShowed: true,
     variablesIsShowed: true,
-    functionsInfo: [],
-    variablesInfo: [],
     evaluatedExpressions: [],
     localVariables: {}
   }),
@@ -104,7 +99,11 @@ export default {
     splitPane,
     Functions
   },
-  beforeMount(){
+  computed: {
+    ...mapGetters(["expressions_info"])
+  },
+  beforeMount() {
+    this.$store.dispatch(FETCH_VARIABLES);
     this.$store.dispatch(FETCH_FUNCTIONS);
   },
   methods: {
@@ -123,92 +122,23 @@ export default {
         this.showRightPane(value);
       }
     },
-    getFunctionsInfo() {
-      let url = this.$store.state.backend + functions_url;
-      Axios.get(url, { headers: this.requestParams.headers })
-        .then(response => {
-          this.onGetFunctionsInfo(response);
-        })
-        .catch(err => {
-          this.onError(err);
-        });
-    },
-    onGetFunctionsInfo(axiosResponse) {
-      this.functionsInfo = axiosResponse.data;
-    },
-    getVariablesInfo() {
-      let url = this.$store.state.backend + variables_url;
-      Axios.get(url, { headers: this.requestParams.headers })
-        .then(response => {
-          this.onGetVariablesInfo(response);
-        })
-        .catch(err => {
-          this.onError(err);
-        });
-    },
-    onGetVariablesInfo(axiosResponse) {
-      let data = axiosResponse.data;
-      this.variablesInfo = data;
-    },
-    onError(error) {
-      let errorResponse = !error.response ? error : error.response;
-      let errorData = !errorResponse.data
-        ? { message: "" }
-        : errorResponse.data;
 
-      let message = errorData.message;
-      let status = !errorResponse.status ? errorResponse : errorResponse.status;
-      this.snack = true;
-      this.snackColor = "error";
-      this.snackText = "Error: HTTP" + status + " " + message;
-    },
     updateVariable(variable) {
-      let url = this.$store.state.backend + variables_url + "/" + variable.name;
-      Axios.put(url, variable, { headers: this.requestParams.headers })
-        .then(response => {
-          this.onUpdateVariable(response);
-        })
-        .catch(err => {
-          this.onError(err);
-        });
+      this.$store.dispatch(UPDATE_VARIABLE, variable);
     },
-    onUpdateVariable(axiosResponse) {
-      let variable = axiosResponse.data;
-      let found = false;
-      let index = -1;
-      for (let i = 0; i < this.variablesInfo.length && !found; i++) {
-        if (this.variablesInfo[i].name === variable.name) {
-          index = i;
-          found = true;
-        }
-      }
 
-      this.$set(this.variablesInfo, index, variable);
-      this.snack = true;
-      this.snackColor = "info";
-      this.snackText = "variable actualizada";
-    },
     addVariable(variable) {
-      let url = this.$store.state.backend + variables_url;
-      Axios.post(url, variable, { headers: this.requestParams.headers })
-        .then(response => {
-          this.onAddVariable(response);
-        })
-        .catch(err => {
-          this.onError(err);
-        });
+      this.$store.dispatch(ADD_VARIABLE, variable);
     },
     showVariableEventInfo(event) {
-      this.snack = true;
-      this.snackColor = event.snackColor;
-      this.snackText = event.message;
+      let info = {
+        active: true,
+        state: event.state,
+        text: event.text
+      };
+      this.$store.dispatch(SET_EXPRESSIONS_REQUEST_STATE, info);
     },
-    onAddVariable(axiosResponse) {
-      this.variablesInfo.push(axiosResponse.data);
-      this.snack = true;
-      this.snackColor = "info";
-      this.snackText = "variable agregada";
-    },
+
     evaluateExpression(expression) {
       this.fetchEvaluatedExpression(expression)
         .then(response => {
@@ -219,14 +149,7 @@ export default {
         });
     },
     fetchEvaluatedExpression(expression) {
-      let url = this.$store.state.backend + expressions_url;
-      return Axios.post(
-        url,
-        { expression: expression },
-        {
-          headers: this.requestParams.headers
-        }
-      );
+      return ExpressionsService.evaluateExpression(expression);
     },
     onEvaluatedExpression(axiosResponse) {
       let expressionWrapper = axiosResponse.data;
@@ -236,15 +159,13 @@ export default {
       if (err.response) {
         let response = err.response;
         //BAD REQUEST
-        if (!response.status) {
-          this.onError(error);
+        if (!response.status || response.status !== 400) {
+          this.$store.dispatch(MANAGE_EXPRESSIONS_REQUEST_ERROR, err);
         } else if (response.status === 400) {
           this.onEvaluatedExpression(response);
-        } else {
-          this.onError(err);
         }
       } else {
-        this.onError(err);
+        this.$store.dispatch(MANAGE_EXPRESSIONS_REQUEST_ERROR, err);
       }
     },
     createLocalVariable(event) {
@@ -264,7 +185,7 @@ export default {
       expressionWrapper.expression = event.name;
       this.evaluatedExpressions.unshift(expressionWrapper);
     }
-  },
+  }
 };
 </script>
 
