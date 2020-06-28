@@ -5,13 +5,8 @@
         <v-layout row wrap fill-height>
           <v-flex class="d-inline-flex" xs12 sm12 md12 wrap id="subcontainer1">
             <v-layout row wrap>
-              <QueueTimeSection
-                ref="QueueTimeSection"
-                @errorRequestEvent="onRequestError($event)"
-              ></QueueTimeSection>
-              <ControllersTimeSection
-                ref="ControllersTimeSection"
-              ></ControllersTimeSection>
+              <QueueTimeSection ref="QueueTimeSection" @errorRequestEvent="onRequestError($event)"></QueueTimeSection>
+              <ControllersTimeSection ref="ControllersTimeSection"></ControllersTimeSection>
             </v-layout>
           </v-flex>
           <UmbralSection ref="UmbralSection"></UmbralSection>
@@ -32,6 +27,8 @@ import UmbralSection from "./views/UmbralSection";
 import Axios from "axios";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
+import { FETCH_KPIS, SET_DASHBOARD_REQUEST_STATE } from "@/store/actions.type";
+import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states.js";
 
 const dashboardChannel = "dashboard";
 
@@ -58,24 +55,22 @@ export default {
     priorities: []
   }),
   beforeMount() {
+    this.$store.dispatch(FETCH_KPIS);
     this.suscribeToEvaluator();
   },
   mounted() {
-    this.$refs.QueueTimeSection.getKPIMeasurements();
-    this.$refs.ControllersTimeSection.getKPIMeasurements();
-    this.$refs.UmbralSection.getKPIMeasurements();
+    // this.$refs.QueueTimeSection.getKPIMeasurements();
+    // this.$refs.ControllersTimeSection.getKPIMeasurements();
+    // this.$refs.UmbralSection.getKPIMeasurements();
   },
   methods: {
-    
     onRequestError(error) {
       let errorResponse = !error.response ? error : error.response;
       let errorData = !errorResponse.data
         ? { message: "" }
         : errorResponse.data;
       let message = errorData.message;
-      let status = !errorResponse.status
-        ? errorResponse
-        : errorResponse.status;
+      let status = !errorResponse.status ? errorResponse : errorResponse.status;
       this.snack = true;
       this.snackColor = "error";
       this.snackText = "HTTP " + status + " Error " + message;
