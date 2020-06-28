@@ -66,7 +66,6 @@ import {
   ADD_VARIABLE,
   SET_EXPRESSIONS_REQUEST_STATE,
   FETCH_FUNCTIONS,
-  MANAGE_EXPRESSIONS_REQUEST_ERROR
 } from "@/store/actions.type";
 import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states.js";
 import { ExpressionsService } from "@/common/api.service";
