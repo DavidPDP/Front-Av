@@ -87,15 +87,37 @@ const evaluatorParametersResource = "/evaluator/parameters"
 export const ParametersService = {
   retrieveParameters(active) {
     // ApiService.setHeader();
-    if(active){
+    if (active) {
       return ApiService.get(evaluatorParametersResource, "active");
-    }else{
+    } else {
       return ApiService.query(evaluatorParametersResource);
     }
-    
+
   },
   updateParameter(parameter) {
     // ApiService.setHeader();
     return ApiService.update(evaluatorParametersResource, parameter.name, parameter);
+  }
+}
+
+const evaluatorVariablesResource = "/evaluator/variables"
+export const VariablesService = {
+  retrieveVariables() {
+    // ApiService.setHeader();
+    return ApiService.query(evaluatorVariablesResource);
+
+
+  },
+  updateVariable(variable) {
+    // ApiService.setHeader();
+    return ApiService.update(evaluatorVariablesResource, variable.name, variable);
+  }
+}
+
+const evaluatorExpressionsResource = "/evaluator/expressions"
+export const ExpressionsService = {
+  retrieveFunctions() {
+    // ApiService.setHeader();
+    return ApiService.get(evaluatorExpressionsResource, "/functions");
   }
 }

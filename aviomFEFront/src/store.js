@@ -4,6 +4,7 @@ import createPersistedState from "vuex-persistedstate";
 import operators from "@/store/operators.module";
 import events from "@/store/events.module";
 import evalParameters from "@/store/evaluator.parameters.module";
+import expressions from "@/store/evaluator.expressions.module";
 
 Vue.use(Vuex);
 
@@ -22,7 +23,8 @@ export default new Vuex.Store({
   modules: {
     operators,
     events,
-    evalParameters
+    evalParameters,
+    expressions
   },
   plugins:[createPersistedState()],
   state: {

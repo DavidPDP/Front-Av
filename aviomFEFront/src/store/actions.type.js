@@ -8,7 +8,12 @@ export const FETCH_EVENTS = "fetchEvents";
 export const FETCH_EVENT_HISTORY = "fecthEventHistory";
 
 
-//Evaluator
+//Evaluator expressions
+export const FETCH_VARIABLES = "fetchVariables";
+export const UPDATE_VARIABLE = "updateVariable";
+export const FETCH_FUNCTIONS = "fetchFunctions";
+export const SET_EXPRESSIONS_REQUEST_STATE = "setVariablesRequestState"
+
 
 //Evaluator Parameters
 export const FECTH_PARAMETERS = "fetchParameters";

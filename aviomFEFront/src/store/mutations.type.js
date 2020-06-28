@@ -9,8 +9,12 @@ export const ADD_EVENT = "addEvent";
 export const SET_EVENT_HISTORY = "setEventHistory";
 
 
-//Evaluator
-
+//Evaluator console
+export const SET_VARIABLES = "setVariables";
+export const SET_UPDATED_VARIABLE = "setUpdatedVariable";
+export const SET_FUNCTIONS = "setFunctions";
+export const MANAGE_EXPRESSIONS_REQUEST_ERROR = "manageRequestError";
+export const UPDATE_EXPRESSIONS_REQUEST_STATE = "updateRequestState"
 
 //Evaluator parameters
 export const SET_PARAMETERS = "setParameters";
