@@ -46,7 +46,7 @@ const actions = {
                 context.commit(SET_PARAMETERS, data);
             }
         ).catch((error) => {
-            context.commit(MANAGE_EVALUATOR_REQUEST_ERROR, error)
+            context.commit(MANAGE_PARAMETERS_REQUEST_ERROR, error)
         });
     },
     [UPDATE_PARAMETER](context, parameter) {
@@ -55,7 +55,7 @@ const actions = {
                 context.commit(SET_UPDATED_PARAMETER, data);
             }
         ).catch((error) => {
-            context.commit(MANAGE_EVALUATOR_REQUEST_ERROR, error)
+            context.commit(MANAGE_PARAMETERS_REQUEST_ERROR, error)
         })
     }
 };
