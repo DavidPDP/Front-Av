@@ -54,11 +54,7 @@
 import DoughnutChartWrapper from "./components/DoughnutChartWrapper";
 import LineChart from "./components/LineChart";
 import BarChart from "./components/BarChart.js";
-import Axios from "axios";
 
-const errorRequestEvent = "errorRequestEvent";
-const measurements_url = "evaluator/measurements";
-const priorities_url = "events/subcategories";
 
 const DoughnutChartConfigurations = {
   backgroundColor: ["#1070CA", "#EC4C47"]
