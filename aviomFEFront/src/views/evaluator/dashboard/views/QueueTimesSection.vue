@@ -477,44 +477,44 @@ export default {
       this.$refs.filteredTimes.update();
       this.KPI.filteredServiceTime.loading = false;
     },
-    setKPIMeasurements(measurements) {
+    setKPIMeasurements(measurementsGroupByKPIName) {
       this.KPI.serviceTime.loading = true;
       this.KPI.maxWaitTime.loading = true;
       this.KPI.queueMaxSize.loading = true;
       this.KPI.rateCareRequests = true;
 
-      this.onGetServiceTimesMeasurements(measurements);
-      this.onGetKPICardMeasurements(measurements);
+      this.onGetServiceTimesMeasurements(measurementsGroupByKPIName);
+      this.onGetKPICardMeasurements(measurementsGroupByKPIName);
     },
-    onGetServiceTimesMeasurements(measurementsGroupByName) {
+    onGetServiceTimesMeasurements(measurementsGroupByKPIName) {
       this.setValuesAtServiceTimes(
         this.KPI.serviceTime,
         0,
-        measurementsGroupByName[this.KPI.serviceTime.datasets[0].kpiName]
+        measurementsGroupByKPIName[this.KPI.serviceTime.datasets[0].kpiName]
       );
       this.setValuesAtServiceTimes(
         this.KPI.serviceTime,
         1,
-        measurementsGroupByName[this.KPI.serviceTime.datasets[1].kpiName]
+        measurementsGroupByKPIName[this.KPI.serviceTime.datasets[1].kpiName]
       );
       this.setValuesAtServiceTimes(
         this.KPI.serviceTime,
         2,
-        measurementsGroupByName[this.KPI.serviceTime.datasets[2].kpiName]
+        measurementsGroupByKPIName[this.KPI.serviceTime.datasets[2].kpiName]
       );
       this.setLabelsToServiceTimes(
         this.KPI.serviceTime,
-        measurementsGroupByName[this.KPI.serviceTime.datasets[0].kpiName]
+        measurementsGroupByKPIName[this.KPI.serviceTime.datasets[0].kpiName]
       );
 
       this.KPI.serviceTime.loading = false;
 
       this.$refs.times.update();
     },
-    onGetKPICardMeasurements(measurementsGroupByName) {
-      this.setKPICardValues(this.KPI.maxWaitTime, measurementsGroupByName);
-      this.setKPICardValues(this.KPI.queueMaxSize, measurementsGroupByName);
-      this.setKPICardValues(this.KPI.rateCareRequests, measurementsGroupByName);
+    onGetKPICardMeasurements(measurementsGroupByKPIName) {
+      this.setKPICardValues(this.KPI.maxWaitTime, measurementsGroupByKPIName);
+      this.setKPICardValues(this.KPI.queueMaxSize, measurementsGroupByKPIName);
+      this.setKPICardValues(this.KPI.rateCareRequests, measurementsGroupByKPIName);
     },
     setKPICardValues(kpiCard, data) {
       let value = 0;
