@@ -116,7 +116,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { EvalUtilsService } from "@/common/api.service";
+import { MeasurementsService, EvalUtilsService } from "@/common/api.service";
 import { SET_DASHBOARD_REQUEST_STATE } from "./actions.type";
 import { MANAGE_DASHBOARD_REQUEST_ERROR } from "./mutations.type";
 import { ERROR } from "@/common/evaluator.request.states.js";
@@ -351,12 +351,12 @@ export default {
           this.KPI.filteredServiceTime.loading = false;
         })
         .catch(err => {
-          this.onRequestError(err, this.KPI.filteredServiceTime);
+          this.KPI.filteredServiceTime.loading = false;
+          this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, err);
         });
     },
     showRateCareDetails() {
       this.KPI.rateCareRequests.details.loading = true;
-      this.onlineControllers = response.data;
       let names = this.getKPINamesOfRateByControllers();
 
       if (names.length > 0) {
@@ -410,30 +410,30 @@ export default {
       this.$refs.rateDetails.update();
     },
     onSelectedPriority() {
-      let params = {
-        names:
-          this.formatKPIByPriority(
-            this.KPI.filteredServiceTime.datasets[0].kpiName,
-            this.selectedPriority
-          ) +
-          "," +
-          this.formatKPIByPriority(
-            this.KPI.filteredServiceTime.datasets[1].kpiName,
-            this.selectedPriority
-          ) +
-          "," +
-          this.formatKPIByPriority(
-            this.KPI.filteredServiceTime.datasets[2].kpiName,
-            this.selectedPriority
-          )
-      };
+      let names = [
+        this.formatKPIByPriority(
+          this.KPI.filteredServiceTime.datasets[0].kpiName,
+          this.selectedPriority
+        ),
+        this.formatKPIByPriority(
+          this.KPI.filteredServiceTime.datasets[1].kpiName,
+          this.selectedPriority
+        ),
+        this.formatKPIByPriority(
+          this.KPI.filteredServiceTime.datasets[2].kpiName,
+          this.selectedPriority
+        )
+      ];
       this.KPI.filteredServiceTime.loading = true;
-      this.fetchKPIMeasurements(
-        params,
-        this.onGetFilteredServiceTime,
-        this.onRequestError,
-        this.KPI.filteredServiceTime
-      );
+
+      MeasurementsService.retrieveKPIS(names)
+        .then(response => {
+          this.onGetFilteredServiceTime(response);
+        })
+        .catch(error => {
+          this.KPI.filteredServiceTime.loading = false;
+          this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, error);
+        });
     },
     //kpiName is, for example: ws? and priority is a number.
     formatKPIByPriority(kpiName, priority) {
@@ -459,18 +459,9 @@ export default {
       this.$set(this.KPI.filteredServiceTime.datasets[1], "label", labelWs);
       this.$set(this.KPI.filteredServiceTime.datasets[2], "label", labelW);
 
-      let keyWq = this.formatKPIByPriority(
-        this.KPI.serviceTime.datasets[0].kpiName,
-        this.selectedPriority
-      );
-      let keyWs = this.formatKPIByPriority(
-        this.KPI.serviceTime.datasets[1].kpiName,
-        this.selectedPriority
-      );
-      let keyW = this.formatKPIByPriority(
-        this.KPI.serviceTime.datasets[2].kpiName,
-        this.selectedPriority
-      );
+      let keyWq = labelWq;
+      let keyWs = labelWs;
+      let keyW = labelW;
 
       this.setValuesAtServiceTimes(
         this.KPI.filteredServiceTime,
