@@ -356,56 +356,40 @@ export default {
           this.onRequestError(err, this.KPI.filteredServiceTime);
         });
     },
-    fetchOnlineControllers() {
-      return Axios.get(this.$store.state.backend + online_controllers_url, {
-        headers: this.requestParams.headers
-      });
-    },
     showRateCareDetails() {
       this.KPI.rateCareRequests.details.loading = true;
-      this.fetchOnlineControllers()
-        .then(response => {
-          this.onlineControllers = response.data;
-          let names = this.getKPINamesOfRateByControllers();
-          if (names !== "") {
-            Axios.get(this.$store.state.backend + measurements_url, {
-              headers: this.requestParams.headers,
-              params: {
-                names: names
-              }
-            })
-              .then(response => {
-                this.onGetRateByControllersMeasurements(response);
-              })
-              .catch(err => {
-                this.onRequestError(err, this.KPI.rateCareRequests.details);
-              });
-          } else {
-            this.onRequestError(
-              {
-                status: 500,
-                message: "Error al traer controladores en linea"
-              },
-              this.KPI.rateCareRequests.details
-            );
-          }
-        })
-        .catch(err => {
-          this.onRequestError(err);
-        });
+      this.onlineControllers = response.data;
+      let names = this.getKPINamesOfRateByControllers();
+
+      if (names.length > 0) {
+        MeasurementsService.retrieveKPIS(names, true)
+          .then(response => {
+            this.onGetRateByControllersMeasurements(response);
+          })
+          .catch(err => {
+            this.KPI.rateCareRequests.details = false;
+            this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, err);
+          });
+      } else {
+        let info = {
+          active: true,
+          state: ERROR,
+          text: "No hay controladores en linea"
+        };
+        this.KPI.rateCareRequests.details = false;
+        this.$store.dispatch(SET_DASHBOARD_REQUEST_STATE, imfo);
+      }
     },
     getKPINamesOfRateByControllers() {
-      let names = "";
+      let names = [];
       for (let index = 0; index < this.onlineControllers.length; index++) {
         let controller = this.onlineControllers[index];
         let id = controller.id;
         if (index === this.onlineControllers.length - 1) {
-          names += this.KPI.rateCareRequests.details.kpiName + id;
-        } else {
-          names += this.KPI.rateCareRequests.details.kpiName + id + ",";
+          names.push(this.KPI.rateCareRequests.details.kpiName + id);
         }
+        return names;
       }
-      return names;
     },
     onGetRateByControllersMeasurements(axiosResponse) {
       let data = axiosResponse.data;
@@ -507,119 +491,44 @@ export default {
       this.$refs.filteredTimes.update();
       this.KPI.filteredServiceTime.loading = false;
     },
-    getLastKPIMeasurements() {
-      let params = {
-        names:
-          this.KPI.serviceTime.datasets[0].kpiName +
-          "," +
-          this.KPI.serviceTime.datasets[1].kpiName +
-          "," +
-          this.KPI.serviceTime.datasets[2].kpiName +
-          "," +
-          this.KPI.maxWaitTime.kpiName +
-          "," +
-          this.KPI.queueMaxSize.kpiName +
-          "," +
-          this.KPI.rateCareRequests.kpiName,
-        lasts: true
-      };
-      let callbackElements = [
-        this.KPI.serviceTime,
-        this.KPI.maxWaitTime,
-        this.KPI.queueMaxSize,
-        this.KPI.rateCareRequests
-      ];
-      callbackElements.forEach(element => {
-        this.$set(element, "loading", true);
-      });
-      this.fetchKPIMeasurements(
-        params,
-        this.onGetLastKPIMeasurements,
-        this.onRequestError,
-        callbackElements
-      );
-    },
-    getKPIMeasurements() {
-      let params = {
-        names:
-          this.KPI.serviceTime.datasets[0].kpiName +
-          "," +
-          this.KPI.serviceTime.datasets[1].kpiName +
-          "," +
-          this.KPI.serviceTime.datasets[2].kpiName
-      };
+    setKPIMeasurements(measurements) {
       this.KPI.serviceTime.loading = true;
-      this.fetchKPIMeasurements(
-        params,
-        this.onGetServiceTimesMeasurements,
-        this.onRequestError,
-        this.KPI.serviceTime
-      );
-      params = {
-        names:
-          this.KPI.maxWaitTime.kpiName +
-          "," +
-          this.KPI.queueMaxSize.kpiName +
-          "," +
-          this.KPI.rateCareRequests.kpiName,
-        lasts: true
-      };
-      let callbackElements = [
-        this.KPI.maxWaitTime,
-        this.KPI.queueMaxSize,
-        this.KPI.rateCareRequests
-      ];
-      callbackElements.forEach(element => {
-        this.$set(element, "loading", true);
-      });
-      this.fetchKPIMeasurements(
-        params,
-        this.onGetKPICardMeasurements,
-        this.onRequestError,
-        callbackElements
-      );
-    },
-    fetchKPIMeasurements(params, callback, errorCallback, callbackElements) {
-      Axios.get(this.$store.state.backend + measurements_url, {
-        headers: this.requestParams.headers,
-        params: params
-      })
-        .then(response => {
-          callback(response);
-        })
-        .catch(err => {
-          errorCallback(err, callbackElements);
-        });
-    },
-    onGetLastKPIMeasurements(axiosResponse) {
-      let response = axiosResponse;
-      let data = response.data;
-      this.addLastValueAtServiceTimes(this.KPI.serviceTime, 0, data.wq);
-      this.addLastValueAtServiceTimes(this.KPI.serviceTime, 1, data.ws);
-      this.addLastValueAtServiceTimes(this.KPI.serviceTime, 2, data.w);
-      this.addLastLabelToServiceTimes(this.KPI.serviceTime, data.wq);
-      this.KPI.serviceTime.loading = false;
-      this.$refs.times.update();
-      this.onGetKPICardMeasurements(response);
-    },
-    onGetServiceTimesMeasurements(axiosResponse) {
-      let data = axiosResponse.data;
+      this.KPI.maxWaitTime.loading = true;
+      this.KPI.queueMaxSize.loading = true;
+      this.KPI.rateCareRequests = true;
 
-      this.setValuesAtServiceTimes(this.KPI.serviceTime, 0, data.wq);
-      this.setValuesAtServiceTimes(this.KPI.serviceTime, 1, data.ws);
-      this.setValuesAtServiceTimes(this.KPI.serviceTime, 2, data.w);
-      this.setLabelsToServiceTimes(this.KPI.serviceTime, data.wq);
+      this.onGetServiceTimesMeasurements(measurements);
+      this.onGetKPICardMeasurements(measurements);
+    },
+    onGetServiceTimesMeasurements(measurementsGroupByName) {
+      this.setValuesAtServiceTimes(
+        this.KPI.serviceTime,
+        0,
+        measurementsGroupByName[this.KPI.serviceTime.datasets[0].kpiName]
+      );
+      this.setValuesAtServiceTimes(
+        this.KPI.serviceTime,
+        1,
+        measurementsGroupByName[this.KPI.serviceTime.datasets[1].kpiName]
+      );
+      this.setValuesAtServiceTimes(
+        this.KPI.serviceTime,
+        2,
+        measurementsGroupByName[this.KPI.serviceTime.datasets[2].kpiName]
+      );
+      this.setLabelsToServiceTimes(
+        this.KPI.serviceTime,
+        measurementsGroupByName[this.KPI.serviceTime.datasets[0].kpiName]
+      );
 
       this.KPI.serviceTime.loading = false;
 
       this.$refs.times.update();
     },
-    onGetKPICardMeasurements(axiosResponse) {
-      let data = axiosResponse.data;
-
-      this.setKPICardValues(this.KPI.maxWaitTime, data);
-      this.setKPICardValues(this.KPI.queueMaxSize, data);
-      this.setKPICardValues(this.KPI.rateCareRequests, data);
+    onGetKPICardMeasurements(measurementsGroupByName) {
+      this.setKPICardValues(this.KPI.maxWaitTime, measurementsGroupByName);
+      this.setKPICardValues(this.KPI.queueMaxSize, measurementsGroupByName);
+      this.setKPICardValues(this.KPI.rateCareRequests, measurementsGroupByName);
     },
     setKPICardValues(kpiCard, data) {
       let value = 0;
@@ -638,18 +547,6 @@ export default {
       this.$set(kpiCard, "value", fixedValue);
       this.$set(kpiCard, "lastValue", fixedLastValue);
       this.$set(kpiCard, "loading", false);
-    },
-    onRequestError(err, callbackElement) {
-      let callbackElements = [];
-      if (!Array.isArray(callbackElement)) {
-        callbackElements.push(callbackElement);
-      } else {
-        callbackElements = callbackElement;
-      }
-      callbackElements.forEach(element => {
-        this.$set(element, "loading", false);
-      });
-      this.$emit(errorRequestEvent, err);
     },
     setValuesAtServiceTimes(serviceTimes, index, measurements) {
       let measurementsValues = [];
@@ -671,40 +568,6 @@ export default {
           labels.unshift(fixedDate);
         });
         this.$set(serviceTimes, "labels", labels);
-      }
-    },
-    addLastValueAtServiceTimes(serviceTimes, index, measurements) {
-      if (!!measurements && measurements.length > 0) {
-        let measurement = measurements[0];
-
-        let fixedValue = parseFloat(measurement.value.toFixed(3));
-        let fixedDate = new Date(measurement.endDate).toLocaleTimeString();
-        if (!serviceTimes.labels.includes(fixedDate)) {
-          serviceTimes.datasets[index].data.push(fixedValue);
-        } else {
-          //if all w, ws and wq has the same length. If not, it means some of them does not have the last value
-          for (let i = 0; i < serviceTimes.datasets.length; i++) {
-            //test if the current index is the current serviceTimes array
-            if (i !== index) {
-              //if the current index dataset has less measurements than the others arrays
-              if (
-                serviceTimes.datasets[index].data.length <
-                serviceTimes.datasets[i].data.length
-              ) {
-                serviceTimes.datasets[index].data.push(fixedValue);
-              }
-            }
-          }
-        }
-      }
-    },
-    addLastLabelToServiceTimes(serviceTimes, measurements) {
-      if (!!measurements && measurements.length > 0) {
-        let measurement = measurements[0];
-        let fixedDate = new Date(measurement.endDate).toLocaleTimeString();
-        if (!serviceTimes.labels.includes(fixedDate)) {
-          serviceTimes.labels.push(fixedDate);
-        }
       }
     }
   }
