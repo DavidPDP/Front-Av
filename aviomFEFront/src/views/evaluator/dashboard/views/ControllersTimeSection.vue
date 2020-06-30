@@ -146,8 +146,8 @@ export default {
     }
   }),
   watch: {
-    measurements: function() {
-      this.setKPIMeasurements(this.measurements);
+    measurements(newValue){
+      this.setKPIMeasurements(newValue);
     }
   },
   computed: {
