@@ -30,7 +30,6 @@ import Axios from "axios";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 
-const dashboardChannel = "dashboard";
 
 export default {
   components: {
@@ -38,16 +37,6 @@ export default {
     ControllersTimeSection,
     UmbralSection
   },
-  computed: {
-    requestParams() {
-      return {
-        headers: {
-          Authorization: this.$store.state.token
-        }
-      };
-    }
-  },
-
   beforeMount() {
     this.$store.dispatch(FETCH_KPIS);
     this.suscribeToEvaluator();
