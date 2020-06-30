@@ -138,7 +138,7 @@ export default {
       }
     }
   }),
-  mounted(){
+  mounted() {
     this.setKPIMeasurements(this.measurements);
   },
   watch: {
@@ -162,9 +162,9 @@ export default {
       let repeatedFlags = {};
       data.forEach(subcategory => {
         let priority = subcategory.basePriority;
-        if (!repeatedFlags[priority]) {
+        if (priority && priority != null && !repeatedFlags[priority]) {
           repeatedFlags[priority] = true;
-          this.priorities.push(subcategory.priority + "");
+          this.priorities.push(priority + "");
         }
       });
     },
