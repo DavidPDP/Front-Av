@@ -35,7 +35,6 @@ export default {
   },
   beforeMount() {
     this.$store.dispatch(FETCH_KPIS);
-    this.suscribeToEvaluator();
   },
   computed: {
     ...mapGetters({
