@@ -53,7 +53,11 @@
 </template>
 
 <script>
-import Axios from "axios";
+import { mapGetters } from "vuex";
+import { MeasurementsService } from "@/common/api.service";
+import { SET_DASHBOARD_REQUEST_STATE } from "./actions.type";
+import { MANAGE_DASHBOARD_REQUEST_ERROR } from "./mutations.type";
+import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states.js";
 
 import BarChart from "./components/BarChart.js";
 import DoughnutChartWrapper from "./components/DoughnutChartWrapper";
@@ -78,15 +82,6 @@ export default {
     DoughnutChartWrapper,
     KPICard,
     BarChart
-  },
-  computed: {
-    requestParams() {
-      return {
-        headers: {
-          Authorization: this.$store.state.token
-        }
-      };
-    }
   },
   data: () => ({
     onlineControllers: [],
@@ -150,56 +145,49 @@ export default {
       }
     }
   }),
+  watch: {
+    measurements: function() {
+      this.setKPIMeasurements(this.measurements);
+    }
+  },
+  computed: {
+    ...mapGetters({
+      omlineControllers: "controllers",
+      measurements: "measurements"
+    })
+  },
   methods: {
-    fetchOnlineControllers() {
-      return Axios.get(this.$store.state.backend + online_controllers_url, {
-        headers: this.requestParams.headers
-      });
-    },
     showOccupationTimeDetails() {
       this.KPI.controllersOccupationTime.showDetails = true;
       this.KPI.controllersOccupationTime.details.loading = true;
-      this.fetchOnlineControllers()
-        .then(response => {
-          this.onlineControllers = response.data;
-          let names = this.getKPINamesOfOcuppationTimesByController();
-          if (names !== "") {
-            let params = {
-              names: names,
-              lasts: true
-            };
-
-            this.fetchKPIMeasurements(
-              params,
-              this.onGetKPIOccupationTimesMeasurementsByController,
-              this.onRequestErrors,
-              this.KPI.controllersOccupationTime.details
-            );
-          } else {
-            this.onRequestErrors(
-              {
-                status: 500,
-                message: "Error al traer controladores en linea"
-              },
-              this.KPI.controllersOccupationTime.details
-            );
-          }
-        })
-        .catch(err => {
-          this.onRequestErrors(err, this.KPI.controllersOccupationTime.details);
-        });
+      let names = this.getKPINamesOfOcuppationTimesByController();
+      if (names.length > 0) {
+        let params = {
+          names: names,
+          lasts: true
+        };
+        MeasurementsService.retrieveKPIS(names, true)
+          .then(response => {
+            this.onGetKPICardMeasurements(data);
+          })
+          .catch(error => {
+            this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, error);
+          });
+      } else {
+        let info = {
+          active: true,
+          state: ERROR,
+          text: "no hay controladores en linea"
+        };
+        this.$store.dispatch(SET_DASHBOARD_REQUEST_STATE, info);
+      }
     },
     getKPINamesOfOcuppationTimesByController(onlineControllers) {
-      let names = "";
+      let names = [];
       for (let index = 0; index < this.onlineControllers.length; index++) {
         let controller = this.onlineControllers[index];
         let id = controller.id;
-        if (index === this.onlineControllers.length - 1) {
-          names += this.KPI.controllersOccupationTime.details.kpiName + id;
-        } else {
-          names +=
-            this.KPI.controllersOccupationTime.details.kpiName + id + ",";
-        }
+        names.push(this.KPI.controllersOccupationTime.details.kpiName + id);
       }
       return names;
     },
@@ -244,57 +232,18 @@ export default {
 
       this.$refs.occupationTimeDetails.update();
     },
-    getKPIMeasurements() {
-      this.getLastKPIMeasurements();
-    },
-    getLastKPIMeasurements() {
-      let params = {
-        names:
-          this.KPI.controllersOccupationTime.kpiName +
-          "," +
-          this.KPI.controllerOccupationTimeDeviation.kpiName +
-          "," +
-          this.KPI.requestsServedDeviation.kpiName,
-        lasts: true
-      };
-      let callbackElements = [
-        this.KPI.controllersOccupationTime,
-        this.KPI.controllerOccupationTimeDeviation,
-        this.KPI.requestsServedDeviation
-      ];
-      callbackElements.forEach(element => {
-        this.$set(element, "loading", true);
-      });
-      this.fetchKPIMeasurements(
-        params,
-        this.onGetLastKPIMeasurements,
-        this.onRequestErrors,
-        callbackElements
+    setKPIMeasurements(measurementsGroupByName) {
+      this.setControllersOccupationTimeMeasurements(
+        measurementsGroupByName[this.KPI.controllersOccupationTime.kpiName]
       );
-    },
-    fetchKPIMeasurements(params, callback, errorCallback, callbackElement) {
-      Axios.get(this.$store.state.backend + measurements_url, {
-        headers: this.requestParams.headers,
-        params: params
-      })
-        .then(response => {
-          callback(response);
-        })
-        .catch(err => {
-          errorCallback(err, callbackElement);
-        });
-    },
-    onGetLastKPIMeasurements(axiosResponse) {
-      let data = axiosResponse.data;
-      this.onGetControllersOccupationTimeMeasurements(
-        data[this.KPI.controllersOccupationTime.kpiName]
-      );
-      this.onGetKPICardMeasurements(
-        data[this.KPI.requestsServedDeviation.kpiName],
+      this.setKPICardMeasurements(
+        measurementsGroupByName[this.KPI.requestsServedDeviation.kpiName],
         this.KPI.requestsServedDeviation
       );
-      this.onGetKPICardMeasurements(
-        data[this.KPI.controllerOccupationTimeDeviation.kpiName],
+      this.setKPICardMeasurements(
+        measurementsGroupByName[
+          this.KPI.controllerOccupationTimeDeviation.kpiName
+        ],
         this.KPI.controllerOccupationTimeDeviation
       );
 
@@ -302,7 +251,7 @@ export default {
       this.KPI.requestsServedDeviation.loading = false;
       this.KPI.controllerOccupationTimeDeviation.loading = false;
     },
-    onGetControllersOccupationTimeMeasurements(measurements) {
+    setControllersOccupationTimeMeasurements(measurements) {
       let measurementsValues = [];
       if (!!measurements && measurements.length > 0) {
         let value = measurements[0].value;
@@ -322,24 +271,12 @@ export default {
       );
       this.$refs.occupationTime.update();
     },
-    onGetKPICardMeasurements(measurements, kpiCard) {
+    setKPICardMeasurements(measurements, kpiCard) {
       if (!!measurements && measurements.length > 0) {
         let value = measurements[0].value;
         let fixedValue = value.toFixed(0);
         this.$set(kpiCard, "value", fixedValue);
       }
-    },
-    onRequestErrors(err, callbackElement) {
-      let callbackElements = [];
-      if (!Array.isArray(callbackElement)) {
-        callbackElements.push(callbackElement);
-      } else {
-        callbackElements = callbackElement;
-      }
-      callbackElements.forEach(element => {
-        this.$set(element, "loading", false);
-      });
-      this.$emit(errorRequestEvent, err);
     }
   }
 };
