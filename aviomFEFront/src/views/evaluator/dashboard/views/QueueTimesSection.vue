@@ -125,8 +125,6 @@ import LineChart from "./components/LineChart.js";
 import KPICard from "./components/KPICard";
 import BarChart from "./components/BarChart.js";
 
-const priorities_url = "events/subcategories";
-
 const colors = {
   blue: "#1070CA",
   red: "#EC4C47",
