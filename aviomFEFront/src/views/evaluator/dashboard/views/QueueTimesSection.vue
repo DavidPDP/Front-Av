@@ -116,7 +116,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { MeasurementsService } from "@/common/api.service";
+import { EvalUtilsService } from "@/common/api.service";
 import { SET_DASHBOARD_REQUEST_STATE } from "./actions.type";
 import { MANAGE_DASHBOARD_REQUEST_ERROR } from "./mutations.type";
 import { ERROR } from "@/common/evaluator.request.states.js";
@@ -328,9 +328,7 @@ export default {
   },
   methods: {
     fetchPriorities() {
-      return Axios.get(this.$store.state.backend + priorities_url, {
-        headers: this.requestParams.headers
-      });
+      return EvalUtilsService.retrievePriorities();
     },
     setPrioritiesFromResponse(axiosResponse) {
       this.priorities = [];
