@@ -57,12 +57,11 @@ import { mapGetters } from "vuex";
 import { MeasurementsService } from "@/common/api.service";
 import { SET_DASHBOARD_REQUEST_STATE } from "./actions.type";
 import { MANAGE_DASHBOARD_REQUEST_ERROR } from "./mutations.type";
-import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states.js";
+import { ERROR } from "@/common/evaluator.request.states.js";
 
 import BarChart from "./components/BarChart.js";
 import DoughnutChartWrapper from "./components/DoughnutChartWrapper";
 import KPICard from "./components/KPICard";
-
 
 const colors = {
   blue: "#1070CA",
@@ -143,7 +142,7 @@ export default {
     }
   }),
   watch: {
-    measurements(newValue){
+    measurements(newValue) {
       this.setKPIMeasurements(newValue);
     }
   },
