@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      info: "dashboard_info";
+      info: "dashboard_info"
     })
   },
 };
