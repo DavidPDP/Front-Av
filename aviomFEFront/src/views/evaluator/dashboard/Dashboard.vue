@@ -5,7 +5,7 @@
         <v-layout row wrap fill-height>
           <v-flex class="d-inline-flex" xs12 sm12 md12 wrap id="subcontainer1">
             <v-layout row wrap>
-              <QueueTimeSection ref="QueueTimeSection" @errorRequestEvent="onRequestError($event)"></QueueTimeSection>
+              <QueueTimeSection ref="QueueTimeSection"></QueueTimeSection>
               <ControllersTimeSection ref="ControllersTimeSection"></ControllersTimeSection>
             </v-layout>
           </v-flex>
@@ -27,7 +27,7 @@ import UmbralSection from "./views/UmbralSection";
 import Axios from "axios";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
-import { FETCH_KPIS, SET_DASHBOARD_REQUEST_STATE } from "@/store/actions.type";
+import { FETCH_KPIS } from "@/store/actions.type";
 import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states.js";
 
 const dashboardChannel = "dashboard";
@@ -47,13 +47,6 @@ export default {
       };
     }
   },
-  data: () => ({
-    snack: false,
-    snackColor: "",
-    snackText: "",
-    onlineControllers: [],
-    priorities: []
-  }),
   beforeMount() {
     this.$store.dispatch(FETCH_KPIS);
     this.suscribeToEvaluator();
