@@ -12,23 +12,23 @@
           <UmbralSection ref="UmbralSection"></UmbralSection>
         </v-layout>
       </v-flex>
-      <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-        {{ snackText }}
-        <v-btn text @click="snack = false">Close</v-btn>
+      <v-snackbar v-model="info.active" :timeout="3000" :color="info.state">
+        {{ info.text }}
+        <v-btn text @click="info.active = false">Close</v-btn>
       </v-snackbar>
     </v-container>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import { FETCH_KPIS } from "@/store/actions.type";
 import QueueTimeSection from "./views/QueueTimesSection";
 import ControllersTimeSection from "./views/ControllersTimeSection";
 import UmbralSection from "./views/UmbralSection";
 import Axios from "axios";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
-import { FETCH_KPIS } from "@/store/actions.type";
-import { ERROR, INFO, SUCCESS } from "@/common/evaluator.request.states.js";
 
 const dashboardChannel = "dashboard";
 
@@ -47,15 +47,17 @@ export default {
       };
     }
   },
+
   beforeMount() {
     this.$store.dispatch(FETCH_KPIS);
     this.suscribeToEvaluator();
   },
-  mounted() {
-    // this.$refs.QueueTimeSection.getKPIMeasurements();
-    // this.$refs.ControllersTimeSection.getKPIMeasurements();
-    // this.$refs.UmbralSection.getKPIMeasurements();
+  computed: {
+    ...mapGetters({
+      info: "dashboard_info";
+    })
   },
+
   methods: {
     onRequestError(error) {
       let errorResponse = !error.response ? error : error.response;
