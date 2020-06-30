@@ -26,10 +26,6 @@ import { FETCH_KPIS } from "@/store/actions.type";
 import QueueTimeSection from "./views/QueueTimesSection";
 import ControllersTimeSection from "./views/ControllersTimeSection";
 import UmbralSection from "./views/UmbralSection";
-import Axios from "axios";
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
-
 
 export default {
   components: {
