@@ -63,9 +63,6 @@ import BarChart from "./components/BarChart.js";
 import DoughnutChartWrapper from "./components/DoughnutChartWrapper";
 import KPICard from "./components/KPICard";
 
-const errorRequestEvent = "errorRequestEvent";
-const measurements_url = "evaluator/measurements";
-const online_controllers_url = "controller/online";
 
 const colors = {
   blue: "#1070CA",
