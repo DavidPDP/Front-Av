@@ -381,9 +381,8 @@ export default {
       for (let index = 0; index < this.onlineControllers.length; index++) {
         let controller = this.onlineControllers[index];
         let id = controller.id;
-        if (index === this.onlineControllers.length - 1) {
-          names.push(this.KPI.rateCareRequests.details.kpiName + id);
-        }
+        names.push(this.KPI.rateCareRequests.details.kpiName + id);
+
         return names;
       }
     },
