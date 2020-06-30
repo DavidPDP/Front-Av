@@ -138,6 +138,9 @@ export default {
       }
     }
   }),
+  mounted(){
+    this.setKPIMeasurements(this.measurements);
+  },
   watch: {
     measurements(newValue) {
       this.setKPIMeasurements(newValue);
@@ -179,7 +182,7 @@ export default {
               })
               .catch(error => {
                 this.KPI.requestsAboveUmbral.details.loading = false;
-                this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, error);
+                this.$store.commit(MANAGE_DASHBOARD_REQUEST_ERROR, error);
               });
           } else {
             let info = {
@@ -192,7 +195,7 @@ export default {
         })
         .catch(err => {
           this.KPI.requestsAboveUmbral.details.loading = false;
-          this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, err);
+          this.$store.commit(MANAGE_DASHBOARD_REQUEST_ERROR, err);
         });
     },
     getKPINamesOfUmbralsByPriority() {

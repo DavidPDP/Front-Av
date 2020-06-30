@@ -313,6 +313,9 @@ export default {
       }
     }
   }),
+  mounted(){
+    this.setKPIMeasurements(this.measurements);
+  },
   watch: {
     measurements(newValue) {
       this.setKPIMeasurements(newValue);
@@ -350,7 +353,7 @@ export default {
         })
         .catch(err => {
           this.KPI.filteredServiceTime.loading = false;
-          this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, err);
+          this.$store.commit(MANAGE_DASHBOARD_REQUEST_ERROR, err);
         });
     },
     showRateCareDetails() {
@@ -364,7 +367,7 @@ export default {
           })
           .catch(err => {
             this.KPI.rateCareRequests.details = false;
-            this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, err);
+            this.$store.commit(MANAGE_DASHBOARD_REQUEST_ERROR, err);
           });
       } else {
         let info = {
@@ -429,7 +432,7 @@ export default {
         })
         .catch(error => {
           this.KPI.filteredServiceTime.loading = false;
-          this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, error);
+          this.$store.commit(MANAGE_DASHBOARD_REQUEST_ERROR, error);
         });
     },
     //kpiName is, for example: ws? and priority is a number.
@@ -481,7 +484,7 @@ export default {
       this.KPI.serviceTime.loading = true;
       this.KPI.maxWaitTime.loading = true;
       this.KPI.queueMaxSize.loading = true;
-      this.KPI.rateCareRequests = true;
+      this.KPI.rateCareRequests.loading = true;
 
       this.onGetServiceTimesMeasurements(measurementsGroupByKPIName);
       this.onGetKPICardMeasurements(measurementsGroupByKPIName);

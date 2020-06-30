@@ -141,6 +141,9 @@ export default {
       }
     }
   }),
+  mounted(){
+    this.setKPIMeasurements(this.measurements);
+  },
   watch: {
     measurements(newValue) {
       this.setKPIMeasurements(newValue);
