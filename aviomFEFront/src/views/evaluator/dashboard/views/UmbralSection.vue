@@ -151,16 +151,14 @@ export default {
   },
   methods: {
     fetchPriorities() {
-      return Axios.get(this.$store.state.backend + priorities_url, {
-        headers: this.requestParams.headers
-      });
+      return EvalUtilsService.retrievePriorities();
     },
     setPrioritiesFromResponse(axiosResponse) {
       this.priorities = [];
       let data = axiosResponse.data;
       let repeatedFlags = {};
       data.forEach(subcategory => {
-        let priority = subcategory.priority;
+        let priority = subcategory.basePriority;
         if (!repeatedFlags[priority]) {
           repeatedFlags[priority] = true;
           this.priorities.push(subcategory.priority + "");
@@ -173,40 +171,35 @@ export default {
         .then(response => {
           this.setPrioritiesFromResponse(response);
           let names = this.getKPINamesOfUmbralsByPriority();
-          if (names !== "") {
-            let params = {
-              names: names,
-              lasts: true
-            };
+          if (names.length > 0) {
             this.KPI.requestsAboveUmbral.details.loading = true;
-            this.fetchKPIMeasurements(
-              params,
-              this.onGetUmbralsByPriority,
-              this.onRequestErrors,
-              this.KPI.requestsAboveUmbral.details
-            );
+            this.MeasurementsService.retrieveKPIS(names, true)
+              .then(response => {
+                this.onGetUmbralsByPriority(response);
+              })
+              .catch(error => {
+                this.KPI.requestsAboveUmbral.details.loading = false;
+                this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, error);
+              });
           } else {
-            this.onRequestErrors(
-              {
-                status: 500,
-                message: "Error al traer controladores en linea"
-              },
-              this.KPI.requestsAboveUmbral.details
-            );
+            let info = {
+              active: true,
+              state: ERROR,
+              text: "No hay prioridades disponibles"
+            };
+            this.$store.dispatch(SET_DASHBOARD_REQUEST_STATE, info);
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.KPI.requestsAboveUmbral.details.loading = false;
+          this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, err);
+        });
     },
     getKPINamesOfUmbralsByPriority() {
-      let names = "";
+      let names = [];
       for (let index = 0; index < this.priorities.length; index++) {
         let priority = this.priorities[index];
-        if (index === this.priorities.length - 1) {
-          names += this.KPI.requestsAboveUmbral.details.kpiName + priority;
-        } else {
-          names +=
-            this.KPI.requestsAboveUmbral.details.kpiName + priority + ",";
-        }
+        names.push(this.KPI.requestsAboveUmbral.details.kpiName + priority);
       }
       return names;
     },
@@ -246,109 +239,27 @@ export default {
       this.KPI.requestsAboveUmbral.details.loading = false;
       this.$refs.aboveUmbralDetails.update();
     },
-    getKPIMeasurements() {
-      let params = {
-        names: this.KPI.queueMeanSize.kpiName
-      };
+    setKPIMeasurements(measurementsGroupByKPIName) {
       this.KPI.queueMeanSize.loading = true;
-      this.fetchKPIMeasurements(
-        params,
-        this.onGetQueueMeanSizeMeasurements,
-        this.onRequestErrors,
-        this.KPI.queueMeanSize
-      );
-      params = {
-        names: this.KPI.requestsAboveUmbral.kpiName
-      };
-
       this.KPI.requestsAboveUmbral.loading = true;
-      this.fetchKPIMeasurements(
-        params,
-        this.onGetAboveUmbralKPIMeasurements,
-        this.onRequestErrors,
-        this.KPI.requestsAboveUmbral
-      );
+      this.onGetQueueMeanSizeMeasurements(measurementsGroupByKPIName);
+      this.onGetAboveUmbralKPIMeasurements(measurementsGroupByKPIName);
     },
-    onGetQueueMeanSizeMeasurements(axiosResponse) {
-      let data = axiosResponse.data;
-      this.setMeasurementsToQueueGraph(data[this.KPI.queueMeanSize.kpiName]);
-      this.setLabelsToQueueGraph(data[this.KPI.queueMeanSize.kpiName]);
+    onGetQueueMeanSizeMeasurements(measurementsGroupByKPIName) {
+      this.setMeasurementsToQueueGraph(
+        measurementsGroupByKPIName[this.KPI.queueMeanSize.kpiName]
+      );
+      this.setLabelsToQueueGraph(
+        measurementsGroupByKPIName[this.KPI.queueMeanSize.kpiName]
+      );
       this.KPI.queueMeanSize.loading = false;
       this.$refs.queueMeanSize.update();
     },
-    onGetAboveUmbralKPIMeasurements(axiosResponse) {
-      let data = axiosResponse.data;
+    onGetAboveUmbralKPIMeasurements(measurementsGroupByKPIName) {
       this.onGetRequestsAboveUmbralMeasurements(
-        data[this.KPI.requestsAboveUmbral.kpiName]
+        measurementsGroupByKPIName[this.KPI.requestsAboveUmbral.kpiName]
       );
       this.KPI.requestsAboveUmbral.loading = false;
-    },
-    getLastKPIMeasurements() {
-      let params = {
-        names:
-          this.KPI.queueMeanSize.kpiName +
-          "," +
-          this.KPI.requestsAboveUmbral.kpiName,
-        lasts: true
-      };
-      let callbackElements = [
-        this.KPI.queueMeanSize,
-        this.KPI.requestsAboveUmbral
-      ];
-      callbackElements.forEach(element => {
-        this.$set(element, "loading", true);
-      });
-
-      this.fetchKPIMeasurements(
-        params,
-        this.onGetLastKPIMeasurements,
-        this.onRequestErrors,
-        callbackElements
-      );
-    },
-    fetchKPIMeasurements(params, callback, errorCallback, callbackElement) {
-      Axios.get(this.$store.state.backend + measurements_url, {
-        headers: this.requestParams.headers,
-        params: params
-      })
-        .then(response => {
-          callback(response);
-        })
-        .catch(err => {
-          errorCallback(err, callbackElement);
-        });
-    },
-    onGetLastKPIMeasurements(axiosResponse) {
-      let data = axiosResponse.data;
-      this.onGetRequestsAboveUmbralMeasurements(
-        data[this.KPI.requestsAboveUmbral.kpiName]
-      );
-
-      this.addLastMeasurementToQueueGraph(data[this.KPI.queueMeanSize.kpiName]);
-      this.addLastLabelToQueueGraph(data[this.KPI.queueMeanSize.kpiName]);
-
-      this.KPI.requestsAboveUmbral.loading = false;
-      this.KPI.queueMeanSize.loading = false;
-      this.$refs.queueMeanSize.update();
-    },
-    addLastMeasurementToQueueGraph(measurements) {
-      if (!!measurements && measurements.length > 0) {
-        let value = measurements[0].value;
-        let fixedValue = parseFloat(value.toFixed(2));
-        let fixedDate = new Date(measurements[0].endDate).toLocaleTimeString();
-        if (!this.KPI.queueMeanSize.labels.includes(fixedDate)) {
-          this.KPI.queueMeanSize.datasets[0].data.push(fixedValue);
-        }
-      }
-    },
-    addLastLabelToQueueGraph(measurements) {
-      if (!!measurements && measurements.length > 0) {
-        let measurement = measurements[0];
-        let fixedDate = new Date(measurement.endDate).toLocaleTimeString();
-        if (!this.KPI.queueMeanSize.labels.includes(fixedDate)) {
-          this.KPI.queueMeanSize.labels.push(fixedDate);
-        }
-      }
     },
     setMeasurementsToQueueGraph(measurements) {
       let measurementsValues = [];
@@ -394,19 +305,6 @@ export default {
       );
       this.KPI.requestsAboveUmbral.loading = false;
       this.$refs.aboveUmbral.update();
-    },
-
-    onRequestErrors(err, callbackElement) {
-      let callbackElements = [];
-      if (!Array.isArray(callbackElement)) {
-        callbackElements.push(callbackElement);
-      } else {
-        callbackElements = callbackElement;
-      }
-      callbackElements.forEach(element => {
-        this.$set(element, "loading", false);
-      });
-      this.$emit(errorRequestEvent, err);
     }
   }
 };
