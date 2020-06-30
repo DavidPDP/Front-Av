@@ -75,6 +75,11 @@ import Variables from "./views/Variables.vue";
 import Functions from "./views/Functions.vue";
 import Console from "./views/Console.vue";
 
+const default_info = {
+  active: false,
+  text: "",
+  state: ""
+};
 export default {
   data: () => ({
     rightPaneIsShowed: true,
@@ -98,6 +103,7 @@ export default {
     ...mapGetters(["expressions_info"])
   },
   beforeCreate() {
+    this.$store.dispatch(SET_EXPRESSIONS_REQUEST_STATE, default_info);
     this.$store.dispatch(FETCH_VARIABLES);
     this.$store.dispatch(FETCH_FUNCTIONS);
   },
