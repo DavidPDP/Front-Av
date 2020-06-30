@@ -115,14 +115,16 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import { MeasurementsService } from "@/common/api.service";
+import { SET_DASHBOARD_REQUEST_STATE } from "./actions.type";
+import { MANAGE_DASHBOARD_REQUEST_ERROR } from "./mutations.type";
+import { ERROR } from "@/common/evaluator.request.states.js";
+
 import LineChart from "./components/LineChart.js";
 import KPICard from "./components/KPICard";
 import BarChart from "./components/BarChart.js";
-import Axios from "axios";
 
-const errorRequestEvent = "errorRequestEvent";
-const measurements_url = "evaluator/measurements";
-const online_controllers_url = "controller/online";
 const priorities_url = "events/subcategories";
 
 const colors = {
@@ -161,19 +163,10 @@ export default {
     LineChart,
     BarChart
   },
-  computed: {
-    requestParams() {
-      return {
-        headers: {
-          Authorization: this.$store.state.token
-        }
-      };
-    }
-  },
   data: () => ({
     selectedPriority: "",
     priorities: [],
-    onlineControllers:[],
+    onlineControllers: [],
     KPI: {
       serviceTime: {
         title: "Tiempo de estancia de eventos",
@@ -322,6 +315,17 @@ export default {
       }
     }
   }),
+  watch: {
+    measurements(newValue) {
+      this.setKPIMeasurements(newValue);
+    }
+  },
+  computed: {
+    ...mapGetters({
+      omlineControllers: "controllers",
+      measurements: "measurements"
+    })
+  },
   methods: {
     fetchPriorities() {
       return Axios.get(this.$store.state.backend + priorities_url, {
@@ -329,7 +333,7 @@ export default {
       });
     },
     setPrioritiesFromResponse(axiosResponse) {
-      this.priorities=[];
+      this.priorities = [];
       let data = axiosResponse.data;
       let repeatedFlags = {};
       data.forEach(subcategory => {
