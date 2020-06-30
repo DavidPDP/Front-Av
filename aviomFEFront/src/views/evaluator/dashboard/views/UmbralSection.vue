@@ -176,7 +176,7 @@ export default {
           let names = this.getKPINamesOfUmbralsByPriority();
           if (names.length > 0) {
             this.KPI.requestsAboveUmbral.details.loading = true;
-            this.MeasurementsService.retrieveKPIS(names, true)
+            MeasurementsService.retrieveKPIS(names, true)
               .then(response => {
                 this.onGetUmbralsByPriority(response);
               })
