@@ -35,6 +35,9 @@ const getters = {
     },
     dashboard_info(state) {
         return state.dashboard_info;
+    },
+    measurements(state){
+        return state.kpi_measurements;
     }
 };
 
@@ -89,8 +92,6 @@ const mutations = {
                 let measurements = kpis[kpi];
                 kpisCopy[kpi] = measurements;
             }
-
-            console.log(kpisCopy);
             state.kpi_measurements = kpisCopy;
         }
     },
