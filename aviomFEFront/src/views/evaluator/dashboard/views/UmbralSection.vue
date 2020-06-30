@@ -280,7 +280,7 @@ export default {
       let labels = [];
       if (!!measurements && measurements.length > 0) {
         measurements.forEach(measurement => {
-          let fixedDate = new Date(measurement.endDate).toLocaleTimeString();
+          let fixedDate = new Date(measurement.end_date).toLocaleTimeString();
           //NOTE: measuremens are ordered ascending from backend
           labels.unshift(fixedDate);
         });
