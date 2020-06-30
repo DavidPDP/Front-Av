@@ -333,7 +333,7 @@ export default {
       let data = axiosResponse.data;
       let repeatedFlags = {};
       data.forEach(subcategory => {
-        let priority = subcategory.priority;
+        let priority = subcategory.basePriority;
         if (!repeatedFlags[priority]) {
           repeatedFlags[priority] = true;
           this.priorities.push(subcategory.priority + "");
