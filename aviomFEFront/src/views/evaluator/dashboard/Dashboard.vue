@@ -23,10 +23,16 @@
 <script>
 import { mapGetters } from "vuex";
 import { FETCH_KPIS } from "@/store/actions.type";
+import { SET_DASHBOARD_REQUEST_STATE } from "@/store/actions.type";
 import QueueTimeSection from "./views/QueueTimesSection";
 import ControllersTimeSection from "./views/ControllersTimeSection";
 import UmbralSection from "./views/UmbralSection";
 
+const default_info ={
+  active:false,
+  text:"",
+  state:"",
+}
 export default {
   components: {
     QueueTimeSection,
@@ -34,6 +40,7 @@ export default {
     UmbralSection
   },
   beforeMount() {
+    this.$store.dispatch(SET_DASHBOARD_REQUEST_STATE, default_info);
     this.$store.dispatch(FETCH_KPIS);
   },
   computed: {
