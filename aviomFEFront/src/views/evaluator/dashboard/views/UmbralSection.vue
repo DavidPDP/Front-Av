@@ -51,6 +51,12 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import { MeasurementsService, EvalUtilsService } from "@/common/api.service";
+import { SET_DASHBOARD_REQUEST_STATE } from "./actions.type";
+import { MANAGE_DASHBOARD_REQUEST_ERROR } from "./mutations.type";
+import { ERROR } from "@/common/evaluator.request.states.js";
+
 import DoughnutChartWrapper from "./components/DoughnutChartWrapper";
 import LineChart from "./components/LineChart";
 import BarChart from "./components/BarChart.js";
@@ -72,15 +78,6 @@ export default {
     DoughnutChartWrapper,
     LineChart,
     BarChart
-  },
-  computed: {
-    requestParams() {
-      return {
-        headers: {
-          Authorization: this.$store.state.token
-        }
-      };
-    }
   },
   data: () => ({
     priorities: [],
@@ -142,6 +139,7 @@ export default {
       }
     }
   }),
+  
   methods: {
     fetchPriorities() {
       return Axios.get(this.$store.state.backend + priorities_url, {
