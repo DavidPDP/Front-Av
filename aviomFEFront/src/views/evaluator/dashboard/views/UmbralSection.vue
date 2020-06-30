@@ -53,8 +53,8 @@
 <script>
 import { mapGetters } from "vuex";
 import { MeasurementsService, EvalUtilsService } from "@/common/api.service";
-import { SET_DASHBOARD_REQUEST_STATE } from "./actions.type";
-import { MANAGE_DASHBOARD_REQUEST_ERROR } from "./mutations.type";
+import { SET_DASHBOARD_REQUEST_STATE } from "@/store/actions.type";
+import { MANAGE_DASHBOARD_REQUEST_ERROR } from "@/store/mutations.type";
 import { ERROR } from "@/common/evaluator.request.states.js";
 
 import DoughnutChartWrapper from "./components/DoughnutChartWrapper";
