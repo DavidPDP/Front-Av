@@ -57,53 +57,6 @@ export default {
       info: "dashboard_info";
     })
   },
-
-  methods: {
-    onRequestError(error) {
-      let errorResponse = !error.response ? error : error.response;
-      let errorData = !errorResponse.data
-        ? { message: "" }
-        : errorResponse.data;
-      let message = errorData.message;
-      let status = !errorResponse.status ? errorResponse : errorResponse.status;
-      this.snack = true;
-      this.snackColor = "error";
-      this.snackText = "HTTP " + status + " Error " + message;
-    },
-    suscribeToEvaluator() {
-      this.socket = new SockJS(this.$store.state.backend + "ws");
-      this.stompClient = Stomp.over(this.socket);
-      this.stompClient.connect(
-        {},
-        frame => {
-          window.console.log("WEBSOCKET FRAME:");
-          window.console.log(frame);
-          this.stompClient.subscribe(
-            this.$store.state.evaluatorChannel + "/" + dashboardChannel,
-            tick => {
-              this.notify(tick);
-            }
-          );
-        },
-        error => {
-          this.onSubscriptionError(error);
-        }
-      );
-    },
-
-    notify(tick) {
-      window.console.log("WEBSOCKET TICK:");
-      window.console.log(tick);
-      this.$refs.QueueTimeSection.getLastKPIMeasurements();
-      this.$refs.ControllersTimeSection.getLastKPIMeasurements();
-      this.$refs.UmbralSection.getLastKPIMeasurements();
-    },
-    onSubscriptionError(error) {
-      this.snack = true;
-      this.snackColor = "error";
-      this.snackText = "Error al suscribirse al sistema: " + error.reason;
-    }
-  }
 };
 </script>
 
