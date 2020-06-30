@@ -170,7 +170,7 @@ export default {
             this.onGetKPICardMeasurements(data);
           })
           .catch(error => {
-            this.$store.dispatch(MANAGE_DASHBOARD_REQUEST_ERROR, error);
+            this.$store.commit(MANAGE_DASHBOARD_REQUEST_ERROR, error);
           });
       } else {
         let info = {
