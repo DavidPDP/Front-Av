@@ -160,5 +160,13 @@ export const MeasurementsService = {
   toUri(queryParams) {
     return "?" + queryParams.join("&");
   }
+}
+
+const evaluatorUtilsResource = "/categories"
+export const EvalUtilsService = {
+  retrievePriorities() {
+    // ApiService.setHeader();
+    return ApiService.query(evaluatorUtilsResource);
+  },
 
 }
