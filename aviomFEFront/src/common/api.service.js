@@ -164,9 +164,13 @@ export const MeasurementsService = {
 
 const evaluatorUtilsResource = "/categories"
 export const EvalUtilsService = {
-  retrievePriorities() {
+  retrievePriorities(currents) {
     // ApiService.setHeader();
-    return ApiService.query(evaluatorUtilsResource);
+    let queryParam = "?current=false";
+    if (currents) {
+      queryParam = "?current=true";
+    }
+    return ApiService.query(evaluatorUtilsResource + queryParam);
   },
 
 }
