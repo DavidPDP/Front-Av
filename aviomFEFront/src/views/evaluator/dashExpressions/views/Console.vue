@@ -44,7 +44,7 @@
                         <v-list dark>
                           <v-list-item>
                             <v-list-item-content>
-                              <v-list-item-title>{{item.valueType}}</v-list-item-title>
+                              <v-list-item-title>{{item.value_type}}</v-list-item-title>
                               <v-list-item-subtitle>{{item.value}}</v-list-item-subtitle>
                             </v-list-item-content>
                           </v-list-item>
