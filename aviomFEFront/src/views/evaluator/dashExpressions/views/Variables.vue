@@ -249,7 +249,7 @@ export default {
         .toString()
         .replace(replaceDoubleQuotes, "'")
         .replace(replaceWhiteSpaces, "");
-      this.toAddVariable.formulaExpression = transformed;
+      this.toAddVariable.formula_expression = transformed;
       return transformed;
     },
     editItem(item) {
