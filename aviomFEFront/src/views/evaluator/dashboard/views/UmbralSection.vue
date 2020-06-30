@@ -61,7 +61,6 @@ import DoughnutChartWrapper from "./components/DoughnutChartWrapper";
 import LineChart from "./components/LineChart";
 import BarChart from "./components/BarChart.js";
 
-
 const DoughnutChartConfigurations = {
   backgroundColor: ["#1070CA", "#EC4C47"]
 };
@@ -139,7 +138,17 @@ export default {
       }
     }
   }),
-  
+  watch: {
+    measurements(newValue) {
+      this.setKPIMeasurements(newValue);
+    }
+  },
+  computed: {
+    ...mapGetters({
+      omlineControllers: "controllers",
+      measurements: "measurements"
+    })
+  },
   methods: {
     fetchPriorities() {
       return Axios.get(this.$store.state.backend + priorities_url, {
@@ -147,7 +156,7 @@ export default {
       });
     },
     setPrioritiesFromResponse(axiosResponse) {
-      this.priorities=[];
+      this.priorities = [];
       let data = axiosResponse.data;
       let repeatedFlags = {};
       data.forEach(subcategory => {
