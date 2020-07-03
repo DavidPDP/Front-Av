@@ -4,7 +4,7 @@
       no-data-text="No hay usuarios por el momento"
       :headers="headers"
       :items="users"
-      sort-by="firstName"
+      sort-by="name"
       class="elevation-1"
     >
       <template v-slot:item.roles="{ item }">
@@ -13,7 +13,7 @@
           v-for="role in item.roles"
           :color="getColor()"
           dark
-        >{{ role.role.name }}</v-chip>
+        >{{ role.name }}</v-chip>
       </template>
 
       <template v-slot:top>
@@ -53,14 +53,6 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
                       <v-text-field
-                        v-model="editedItem.identification"
-                        label="Identificación"
-                        outlined
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
                         v-model="editedItem.email"
                         :rules="emailRules"
                         label="Email"
@@ -69,7 +61,7 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field v-model="editedItem.login" label="Usuario" outlined required></v-text-field>
+                      <v-text-field v-model="editedItem.accountName" label="Usuario" outlined required></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
                       <v-combobox
@@ -145,11 +137,10 @@ export default {
     return {
       dialog: false,
       headers: [
-        { text: "Nombre", align: "left", sortable: false, value: "firstName" },
+        { text: "Nombre", align: "left", sortable: false, value: "name" },
         { text: "Apellido", value: "lastName" },
-        { text: "Identificación", value: "identification" },
         { text: "Email", value: "email" },
-        { text: "Usuario", value: "login" },
+        { text: "Usuario", value: "accountName" },
         { text: "Roles", value: "roles" },
         { text: "Acciones", value: "action", sortable: false }
       ],
@@ -157,21 +148,19 @@ export default {
       roles: [],
       editedIndex: -1,
       editedItem: {
-        firstName: "",
+        name: "",
         lastName: "",
-        identification: "",
         email: "",
-        login: "",
+        accountName: "",
         roles: [],
         password: "",
         conPassword: ""
       },
       defaultItem: {
-        firstName: "",
+        name: "",
         lastName: "",
-        identification: "",
         email: "",
-        login: "",
+        accountName: "",
         roles: []
       },
       showPassword: false,
@@ -183,9 +172,9 @@ export default {
           value === this.editedItem.password || "Las contraseñas no coinciden"
       },
       nameRules: [
-        firstName => !!firstName || "El nombre es requerido",
-        firstName =>
-          firstName.length > 2 || "El nombre debe ser más largo a 3 caracteres"
+        name => !!name || "El nombre es requerido",
+        name =>
+          name.length > 2 || "El nombre debe ser más largo a 3 caracteres"
       ],
       lastnameRules: [
         lastname => !!lastname || "El apellido es requerido",
@@ -221,7 +210,7 @@ export default {
   methods: {
     initialize() {
       this.getListOfUsers();
-      this.getRoles();
+     // this.getRoles();
     },
 
     editItem(item) {
@@ -270,27 +259,26 @@ export default {
     },
     async getListOfUsers() {
       var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "users";
+      let url = this.$store.state.backend + "/atc/operators";
       Axios.get(url, { headers: headers }).then(response => {
+        console.log(response.data)
         this.users = response.data;
+        
       });
     },
 
     async sendRegisterDataUser(user) {
       var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "user";
+      let url = this.$store.state.backend + "/atc/operators";
       Axios.post(
         url,
         {
-          firstName: user.firstName,
+          name: user.name,
           lastName: user.lastName,
-          identification: user.identification,
           email: user.email,
-          login: user.login,
+          accountName: user.accountName,
           roles: user.roles,
-          password: shajs("sha512")
-            .update(user.password)
-            .digest("hex")
+          password: user.password
         },
         { headers: headers }
       ).then(response => {
@@ -318,13 +306,11 @@ export default {
       Axios.put(
         url,
         {
-          id: updateUser.id,
-          firstName: updateUser.firstName,
+          name: updateUser.name,
           lastName: updateUser.lastName,
-          identification: updateUser.identification,
           email: updateUser.email,
-          login: updateUser.login,
-          roles: updateUser.roles
+          accountName: updateUser.accountName,
+          roles: updateUser.roles,
         },
         { headers: headers }
       ).then(response => {

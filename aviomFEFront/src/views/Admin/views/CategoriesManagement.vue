@@ -4,20 +4,30 @@
       no-data-text="No hay categorias por el momento"
       :headers="headers"
       :items="categories"
+      :search="search"
       sort-by="name"
       class="elevation-1"
     >
-     <template v-slot:item.base_priority="{ item }">
-      <v-chip :color="getColor(item.base_priority)" dark>{{ item.base_priority }}</v-chip>
+     <template v-slot:item.basePriority="{ item }">
+      <v-chip :color="getColor(item.basePriority)" dark>{{ item.basePriority }}</v-chip>
     </template>
 
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title>Categorías</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
-          <v-spacer></v-spacer>
-          
-          <v-dialog v-model="categoryDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+
+              <v-text-field
+              v-model="search"
+              append-icon="search"
+              label="Buscar"
+              single-line
+              hide-details
+              >
+            </v-text-field>
+      <v-spacer></v-spacer>
+
+       <v-dialog v-model="categoryDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
       <template v-slot:activator="{ on }">
         <v-btn color="primary" dark v-on="on">Nueva Categoría</v-btn>
       </template>
@@ -43,6 +53,8 @@
                       <v-combobox
                         v-model="editedItem.category"
                         :items="parentCategories"
+                        item-text="name"
+                        item-value=" "
                         label="Categoría Padre"
                         outlined
                         required
@@ -51,7 +63,7 @@
 
                     <v-col cols="12" sm="6" md="6">
                       <v-text-field
-                        v-model="editedItem.base_priority"
+                        v-model="editedItem.basePriority"
                         label="Prioridad"
                         outlined
                         required
@@ -195,7 +207,7 @@
                       <v-col cols="12" sm="12" md="12">
                     
                       <v-textarea
-                          v-model="protocol.step.description"
+                        v-model="protocol.step.description"
                         label="Descripción"
                           auto-grow
                           outlined
@@ -233,76 +245,28 @@ import Axios from "axios";
 export default {
     data(){
         return{
+            search: '',
             categoryDialog: false,
             protocolDialog: false,
             headers: [
               { text: "Nombre", align: "left", sortable: false, value: "name" },
-              { text: "Prioridad", value: "base_priority" },
+              { text: "Prioridad", value: "basePriority" },
               { text: "Categoría", value: "category.name" },
-              { text: "Protocolos", value: "protocols" },
+              { text: "Protocolos", value: "category.name" },
               { text: "Acciones", value: "action", sortable: false }
             ],
-            categories: [ {
-        id: 1,
-        name: "Pánico",
-        category: {
-            id: 2,
-            name: "Emergencia",
-            category: null,
-            protocols: [],
-            base_priority: null
-        },
-        protocols: [
-            {
-                id: 67,
-                stepOrder: 1,
-                step: {
-                    id: 49,
-                    description: "Informar vía IP y chat a UTR&T, SSFCI, personal en vía y COT.",
-                    stepType: {
-                        id: 2,
-                        name: "Actions"
-                    }
-                }
-            },
-            {
-                id: 68,
-                stepOrder: 2,
-                step: {
-                    id: 50,
-                    description: "Registrar en bitácora",
-                    stepType: {
-                        id: 2,
-                        name: "Actions"
-                    }
-                }
-            },
-            {
-                id: 69,
-                stepOrder: 3,
-                step: {
-                    id: 51,
-                    description: "Hacer seguimiento hasta establecer la continuidad del vehículo",
-                    stepType: {
-                        id: 2,
-                        name: "Actions"
-                    }
-                }
-            }
-        ],
-        base_priority: 1000
-    },],
+            categories: [],
             editedIndex: -1,
               editedItem: {
                 name: "",
                 category: {},
-                base_priority: "",
+                basePriority: "",
                 protocols: [],
               },
               defaultItem: {
                 name: "",
                 category: {},
-                base_priority: "",
+                basePriority: "",
                 protocols: []
               },
 
@@ -333,6 +297,7 @@ export default {
     parentCategories(){
       let parentCategories = this.categories;
       parentCategories = parentCategories.filter(category => category.category === null)
+      console.log(parentCategories)
       return parentCategories;
     },
 
@@ -358,9 +323,12 @@ export default {
       val || this.close();
     }
   },
-   created() {
-    //this.initialize();
+  
+ 
+  mounted(){
+      this.initialize();
   },
+
    methods:{
 
       initialize() {
@@ -368,7 +336,10 @@ export default {
       
     },
 
+    
+
      getColor(priority) {
+      if(priority === null) return "white"
       if (priority > 800) return "red";
       else if (priority > 400) return "orange";
       else return "green";
@@ -412,7 +383,7 @@ export default {
 
     async sendDataCategory(category) {
       var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "atc/category";
+      let url = this.$store.state.backend + "/atc/category";
       Axios.post(
         url,
         {
@@ -430,7 +401,7 @@ export default {
 /// Preguntar a johan
       updateCategory(index) {
       var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "act/category";
+      let url = this.$store.state.backend + "/act/category";
       let updateCategory = this.categories[index];
       Axios.put(
         url,
@@ -451,7 +422,7 @@ export default {
 
       deleteCategory(category) {
       var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "atc/category/"+category.name;
+      let url = this.$store.state.backend + "/atc/category/"+category.name;
       Axios.delete(
         url,
         {},
@@ -464,11 +435,13 @@ export default {
 
 
      async getCategories() {
-      //var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "atc/categories" ;
+      var headers = { Authorization: this.$store.state.token };
+      let url = this.$store.state.backend + "/atc/categories?current="+ true ;
         Axios.get(url).then(response => {
         this.categories = response.data;
+        
       });
+      //console.log(this.categories)
     },
 
     saveProtocol(){
