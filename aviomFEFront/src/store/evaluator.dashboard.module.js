@@ -36,7 +36,7 @@ const getters = {
     dashboard_info(state) {
         return state.dashboard_info;
     },
-    measurements(state){
+    measurements(state) {
         return state.kpi_measurements;
     }
 };
@@ -87,8 +87,8 @@ const mutations = {
     [SET_KPIS](state, kpis) {
         if (kpis) {
             let kpisCopy = state.kpi_measurements;
-            
-            for(let kpi in kpis){
+
+            for (let kpi in kpis) {
                 let measurements = kpis[kpi];
                 kpisCopy[kpi] = measurements;
             }
@@ -96,8 +96,19 @@ const mutations = {
         }
     },
     [ADD_LASTS_KPIS](state, kpis) {
-        //TODO:
-
+        //Kpis must be an object in which each property name represents a kpi name and contains a list fo measurements
+        for (let kpi in kpis) {
+            let measurements = kpis[kpi];
+            let measurement = {};
+            if (measurements && measurements.length > 0) {
+                measurement = measurements[0];
+            }
+            let measurementIndex = state.kpi_measurements.findIndex(item => item.id === measurement.id);
+            //does not exist this specific measurement
+            if (measurementIndex === -1) {
+                state.kpi_measurements[kpi].push(measurement);
+            }
+        }
     }
 };
 
