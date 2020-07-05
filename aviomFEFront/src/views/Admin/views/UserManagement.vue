@@ -3,7 +3,7 @@
     <v-data-table
       no-data-text="No hay usuarios por el momento"
       :headers="headers"
-      :items="users"
+      :items="operators.operators"
       sort-by="name"
       class="elevation-1"
     >
@@ -35,7 +35,7 @@
                   <v-row>
                     <v-col cols="12" sm="6" md="6">
                       <v-text-field
-                        v-model="editedItem.firstName"
+                        v-model="editedItem.name"
                         :rules="nameRules"
                         label="Nombre"
                         outlined
@@ -130,7 +130,8 @@
 
 <script>
 import Axios from "axios";
-import shajs from "sha.js";
+import { mapGetters } from "vuex";
+import { FETCH_OPERATORS, FETCH_ROLES, SAVE_OPERATOR, UPDATE_OPERATOR, DESTROY_OPERATOR } from "@/store/actions.type";
 
 export default {
   data() {
@@ -145,7 +146,6 @@ export default {
         { text: "Acciones", value: "action", sortable: false }
       ],
       users: [],
-      roles: [],
       editedIndex: -1,
       editedItem: {
         name: "",
@@ -194,7 +194,8 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo Usuario" : "Editar Usuario";
-    }
+    },
+    ...mapGetters(["operators", "roles"])
   },
 
   watch: {
@@ -210,7 +211,7 @@ export default {
   methods: {
     initialize() {
       this.getListOfUsers();
-     // this.getRoles();
+      this.getRoles();
     },
 
     editItem(item) {
@@ -241,82 +242,53 @@ export default {
     },
     async save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.users[this.editedIndex], this.editedItem);
+        Object.assign(this.operators[this.editedIndex], this.editedItem);
         this.updateUser(this.editedIndex);
+        this.getListOfUsers();
       } else {
         this.sendRegisterDataUser(this.editedItem);
-        this.users.push(this.editedItem);
+        this.getListOfUsers();
       }
       this.close();
       location.reload();
     },
     async getRoles() {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "roles";
-      Axios.get(url, { headers: headers }).then(response => {
-        this.roles = response.data;
-      });
+      this.$store.dispatch(FETCH_ROLES, false);
     },
     async getListOfUsers() {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "/atc/operators";
-      Axios.get(url, { headers: headers }).then(response => {
-        console.log(response.data)
-        this.users = response.data;
-        
-      });
+      this.$store.dispatch(FETCH_OPERATORS, false);
     },
 
     async sendRegisterDataUser(user) {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "/atc/operators";
-      Axios.post(
-        url,
-        {
+        let operator = {
           name: user.name,
           lastName: user.lastName,
           email: user.email,
           accountName: user.accountName,
-          roles: user.roles,
+         // roles: user.roles,
           password: user.password
-        },
-        { headers: headers }
-      ).then(response => {
-        alert(response.data);
-      });
+        };
+        this.$store.dispatch(SAVE_OPERATOR, operator);
     },
 
     deleteUser(user) {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "deleteUser" + "?id="+user.id;
-      Axios.post(
-        url,
-        {},
-        { headers: headers }
-      ).then(response => {
-        alert(response.data);
-        location.reload();
-      });
+      this.$store.dispatch(DESTROY_OPERATOR, user.accountName);
+      this.getListOfUsers();
+      location.reload();
     },
 
     updateUser(index) {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "user";
-      let updateUser = this.users[index];
-      Axios.put(
-        url,
+      let updateUser = this.operators[index];
+      let operator = 
         {
           name: updateUser.name,
           lastName: updateUser.lastName,
           email: updateUser.email,
           accountName: updateUser.accountName,
-          roles: updateUser.roles,
-        },
-        { headers: headers }
-      ).then(response => {
-        alert(response.data);
-        location.reload();
-      });
+          //roles: updateUser.roles,
+        };
+        console.log(operator);
+      this.$store.dispatch(UPDATE_OPERATOR, operator);
     }
   }
 };

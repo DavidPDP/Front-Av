@@ -7,14 +7,6 @@
       sort-by="name"
       class="elevation-1"
     >
-      <template v-slot:item.services="{ item }">
-        <v-chip
-          :key="service.id"
-          v-for="service in item.services"
-          :color="getColor()"
-          dark
-        >{{ service.name }}</v-chip>
-      </template>
 
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -42,18 +34,6 @@
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-combobox
-                        v-model="editedItem.services"
-                        :items="services"
-                        item-text="name"
-                        label="Seleccionar servicios"
-                        multiple
-                        outlined
-                        dense
-                        chips
-                      ></v-combobox>
-                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -75,7 +55,8 @@
 </template>
 
 <script>
-import Axios from "axios";
+import { mapGetters } from "vuex";
+import { FETCH_ROLES, SAVE_ROLE, UPDATE_ROLE, DESTROY_ROLE } from "@/store/actions.type";
 
 export default {
     data(){
@@ -83,19 +64,16 @@ export default {
              dialog: false,
             headers: [
                 { text: "Nombre", align: "left", sortable: false, value: "name" },
-                { text: "Servicios", value: "services" },
                 { text: "Acciones", value: "action", sortable: false }
             ],
-            roles: [],
-            services: [],
             editedIndex: -1,
             editedItem: {
                 name: "",
-                services: [],
+
             },
             defaultItem: {
                 name: "",
-                services: [],
+
          },
          rules: {
             required: value => !!value || "Required.",
@@ -112,7 +90,8 @@ export default {
     computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo Rol" : "Editar Rol";
-    }
+    },
+     ...mapGetters(["roles"])
   },
    watch: {
     dialog(val) {
@@ -126,7 +105,6 @@ export default {
 
   methods: {
     initialize() {
-      this.getServices();
       this.getRoles();
     },
 
@@ -160,68 +138,29 @@ export default {
         this.updateRole(this.editedIndex);
       } else {
         this.sendRole(this.editedItem);
-        this.roles.push(this.editedItem);
+        this.getRoles();
       }
       this.close();
-      location.reload();
+      //location.reload();
     },
     async getRoles() {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "roles";
-      Axios.get(url, { headers: headers }).then(response => {
-        this.roles = response.data;
-      });
-    },
-    async getServices() {
-      var headers = { Authorization: this.$store.state.token };
-      
+      this.$store.dispatch(FETCH_ROLES, false);
     },
 
     async sendRole(role) {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "";
-      Axios.post(
-        url,
-        {
-          name: role.name,
-          lastName: user.lastName,
-          roles: role.services,
-        },
-        { headers: headers }
-      ).then(response => {
-        alert(response.data);
-      });
+      console.log("ENTRO");
+      this.$store.dispatch(SAVE_ROLE, role.name);
     },
 
     deleteRole(role) {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "" + "?id="+role.id;
-      Axios.post(
-        url,
-        {},
-        { headers: headers }
-      ).then(response => {
-        alert(response.data);
-        location.reload();
-      });
+      this.$store.dispatch(DESTROY_ROLE, role.name);
     },
 
     updateRole(index) {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "";
+
+      
       let updateRole = this.roles[index];
-      Axios.put(
-        url,
-        {
-          id: updateRole.id,
-          name: updateRole.name,
-          services: updateRole.services
-        },
-        { headers: headers }
-      ).then(response => {
-        alert(response.data);
-        location.reload();
-      });
+      this.$store.dispatch(UPDATE_ROLE, role.name);
     }
   }
 

@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import createPersistedState from "vuex-persistedstate";
 import operators from "@/store/operators.module";
 import events from "@/store/events.module";
+import roles from "@/store/roles.module";
 
 Vue.use(Vuex);
 
@@ -20,7 +21,8 @@ const getDefaultState=()=>{
 export default new Vuex.Store({
   modules: {
     operators,
-    events
+    events,
+    roles
   },
   plugins:[createPersistedState()],
   state: {

@@ -7,3 +7,6 @@ export const SET_OPERATOR_HISTORY="setOperatorHistory";
 //Events module
 export const ADD_EVENT="addEvent";
 export const SET_EVENT_HISTORY="setEventHistory";
+
+//Roles module
+export const SET_ROLES="setRoles";
