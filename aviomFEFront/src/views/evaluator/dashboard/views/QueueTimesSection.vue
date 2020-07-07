@@ -543,7 +543,7 @@ export default {
         measurements.forEach(measurement => {
           let fixedValue = measurement.value.toFixed(3);
           //NOTE: measuremens are ordered ascending from backend
-          measurementsValues.unshift(fixedValue);
+          measurementsValues.push(fixedValue);
         });
         this.$set(serviceTimes.datasets[index], "data", measurementsValues);
       }
@@ -554,7 +554,7 @@ export default {
         measurements.forEach(measurement => {
           let fixedDate = new Date(measurement.end_date).toLocaleTimeString();
           //NOTE: measuremens are ordered ascending from backend
-          labels.unshift(fixedDate);
+          labels.push(fixedDate);
         });
         this.$set(serviceTimes, "labels", labels);
       }

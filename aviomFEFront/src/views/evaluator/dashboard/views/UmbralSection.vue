@@ -271,7 +271,7 @@ export default {
           let value = element.value;
           let fixedValue = parseFloat(value.toFixed(2));
           //NOTE: measuremens are ordered ascending from backend
-          measurementsValues.unshift(fixedValue);
+          measurementsValues.push(fixedValue);
         });
       }
       this.$set(this.KPI.queueMeanSize.datasets[0], "data", measurementsValues);
@@ -282,7 +282,7 @@ export default {
         measurements.forEach(measurement => {
           let fixedDate = new Date(measurement.end_date).toLocaleTimeString();
           //NOTE: measuremens are ordered ascending from backend
-          labels.unshift(fixedDate);
+          labels.push(fixedDate);
         });
         this.$set(this.KPI.queueMeanSize, "labels", labels);
       }
