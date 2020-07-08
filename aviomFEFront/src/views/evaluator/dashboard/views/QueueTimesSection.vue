@@ -366,7 +366,7 @@ export default {
             this.onGetRateByControllersMeasurements(response);
           })
           .catch(err => {
-            this.KPI.rateCareRequests.details = false;
+            this.KPI.rateCareRequests.details.loading = false;
             this.$store.commit(MANAGE_DASHBOARD_REQUEST_ERROR, err);
           });
       } else {
@@ -375,8 +375,8 @@ export default {
           state: ERROR,
           text: "No hay controladores en linea"
         };
-        this.KPI.rateCareRequests.details = false;
-        this.$store.dispatch(SET_DASHBOARD_REQUEST_STATE, imfo);
+        this.KPI.rateCareRequests.details.loading = false;
+        this.$store.dispatch(SET_DASHBOARD_REQUEST_STATE, info);
       }
     },
     getKPINamesOfRateByControllers() {
@@ -385,9 +385,8 @@ export default {
         let controller = this.onlineControllers[index];
         let id = controller.id;
         names.push(this.KPI.rateCareRequests.details.kpiName + id);
-
-        return names;
       }
+      return names;
     },
     onGetRateByControllersMeasurements(axiosResponse) {
       let data = axiosResponse.data;
