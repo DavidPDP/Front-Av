@@ -19,13 +19,13 @@ export default {
       return {
         zoom: {
           // Boolean to enable zooming
-          enabled: false,
+          enabled: true,
           // Zooming directions. Remove the appropriate direction to disable
           // Eg. 'y' would only allow zooming in the y direction
           mode: 'x',
         },
-        responsive:false,
-        maintainAspectRatio:false,
+        responsive:true,
+        maintainAspectRatio:true,
         pan: {
           // Boolean to enable panning
           enabled: true,
