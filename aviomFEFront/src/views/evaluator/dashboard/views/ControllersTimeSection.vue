@@ -178,6 +178,7 @@ export default {
           state: ERROR,
           text: "no hay controladores en linea"
         };
+        this.KPI.controllersOccupationTime.details.loading = false;
         this.$store.dispatch(SET_DASHBOARD_REQUEST_STATE, info);
       }
     },
