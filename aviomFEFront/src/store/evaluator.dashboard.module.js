@@ -98,13 +98,9 @@ const mutations = {
     [ADD_LASTS_KPIS](state, kpis) {
         //Kpis must be an object in which each property name represents a kpi name and contains a list fo measurements
         for (let kpi in kpis) {
-            let measurements = kpis[kpi];
-            let measurement = {};
-            if (measurements && measurements.length > 0) {
-                measurement = measurements[0];
-            }
-            let measurementIndex = state.kpi_measurements.findIndex(item => item.id === measurement.id);
-            //does not exist this specific measurement
+            let measurement = kpis[kpi];
+            let measurementIndex = state.kpi_measurements[kpi].findIndex(item => item.id === measurement.id);
+            //if the new measurement does not exist.
             if (measurementIndex === -1) {
                 state.kpi_measurements[kpi].push(measurement);
             }
