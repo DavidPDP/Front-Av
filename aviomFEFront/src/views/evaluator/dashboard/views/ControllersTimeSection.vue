@@ -56,7 +56,7 @@
 import { mapGetters } from "vuex";
 import { MeasurementsService } from "@/common/api.service";
 import { SET_DASHBOARD_REQUEST_STATE } from "@/store/actions.type";
-import { MANAGE_DASHBOARD_REQUEST_ERROR } from "@/store/mutations.type";
+import { MANAGE_DASHBOARD_REQUEST_ERROR, ADD_LASTS_KPIS } from "@/store/mutations.type";
 import { ERROR } from "@/common/evaluator.request.states.js";
 
 import BarChart from "./components/BarChart.js";
@@ -142,6 +142,17 @@ export default {
   }),
   mounted(){
     this.setKPIMeasurements(this.measurements);
+  },
+  created(){
+    this.unsubscribe  = this.$store.subscribe((mutation,state)=>{
+      if(mutation.type === ADD_LASTS_KPIS ){
+          console.log(`Updating to ${state.dashboard.kpi_measurements}`);
+          this.setKPIMeasurements(this.measurements);
+      }
+    })
+  },
+  beforeDestroy(){
+    this.unsubscribe();
   },
   computed: {
     ...mapGetters({

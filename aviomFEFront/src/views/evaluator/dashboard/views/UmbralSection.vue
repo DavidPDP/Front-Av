@@ -54,7 +54,7 @@
 import { mapGetters } from "vuex";
 import { MeasurementsService, EvalUtilsService } from "@/common/api.service";
 import { SET_DASHBOARD_REQUEST_STATE } from "@/store/actions.type";
-import { MANAGE_DASHBOARD_REQUEST_ERROR } from "@/store/mutations.type";
+import { MANAGE_DASHBOARD_REQUEST_ERROR, ADD_LASTS_KPIS } from "@/store/mutations.type";
 import { ERROR } from "@/common/evaluator.request.states.js";
 
 import DoughnutChartWrapper from "./components/DoughnutChartWrapper";
@@ -140,6 +140,17 @@ export default {
   }),
   mounted() {
     this.setKPIMeasurements(this.measurements);
+  },
+  created(){
+    this.unsubscribe  = this.$store.subscribe((mutation,state)=>{
+      if(mutation.type === ADD_LASTS_KPIS ){
+          console.log(`Updating to ${state.dashboard.kpi_measurements}`);
+          this.setKPIMeasurements(this.measurements);
+      }
+    })
+  },
+  beforeDestroy(){
+    this.unsubscribe();
   },
   computed: {
     ...mapGetters({
@@ -266,7 +277,7 @@ export default {
           let value = element.value;
           let fixedValue = parseFloat(value.toFixed(2));
           //NOTE: measuremens are ordered ascending from backend
-          measurementsValues.push(fixedValue);
+          measurementsValues.unshift(fixedValue);
         });
       }
       this.$set(this.KPI.queueMeanSize.datasets[0], "data", measurementsValues);
@@ -277,7 +288,7 @@ export default {
         measurements.forEach(measurement => {
           let fixedDate = new Date(measurement.end_date).toLocaleTimeString();
           //NOTE: measuremens are ordered ascending from backend
-          labels.push(fixedDate);
+          labels.unshift(fixedDate);
         });
         this.$set(this.KPI.queueMeanSize, "labels", labels);
       }
