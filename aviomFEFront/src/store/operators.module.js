@@ -3,11 +3,15 @@ import {
     SET_ONLINE_OPERATORS,
     SET_OPERATORS,
     ADD_CONTROLLER,
-    SET_OPERATOR_HISTORY
+    SET_OPERATOR_HISTORY,
+    ADD_OPERATOR
 } from "./mutations.type";
 import {
     FETCH_OPERATORS,
-    FETCH_OPERATOR_HISTORY
+    FETCH_OPERATOR_HISTORY,
+    SAVE_OPERATOR,
+    UPDATE_OPERATOR,
+    DESTROY_OPERATOR
 } from "./actions.type";
 
 const state = {
@@ -25,6 +29,9 @@ const getters = {
     },
     operatorTracks(state){
         return state.history;
+    },
+    operators(state){
+        return state.operators;
     }
 };
 
@@ -46,6 +53,36 @@ const actions = {
         OperatorsService.retrieveHistory(accountName).then(
             ({ data }) => {
                 context.commit(SET_OPERATOR_HISTORY, data);
+            }
+        ).catch((error) => {
+            console.log(error);
+        });
+    },
+    [SAVE_OPERATOR](context, operator){
+        OperatorsService.create(operator).then(
+            ({ data }) => {
+                //context.commit(ADD_OPERATOR, data);
+                console.log(data);
+            }
+        ).catch((error) => {
+            console.log(error);
+        });
+    },
+    [UPDATE_OPERATOR](context, operator){
+        console.log("AQUI")
+        OperatorsService.update(operator).then(
+            ({ data }) => {
+                console.log(data);
+            }
+        ).catch((error) => {
+            console.log(error);
+        });
+    },
+    [DESTROY_OPERATOR](context, accountName){
+        console.log("AQUI")
+        OperatorsService.destroy(accountName).then(
+            ({ data }) => {
+                console.log(data);
             }
         ).catch((error) => {
             console.log(error);

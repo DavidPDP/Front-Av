@@ -8,6 +8,9 @@ export const SET_OPERATOR_HISTORY = "setOperatorHistory";
 export const ADD_EVENT = "addEvent";
 export const SET_EVENT_HISTORY = "setEventHistory";
 
+//Roles module
+export const SET_ROLES="setRoles";
+
 //Evaluator dashboard
 export const SET_KPIS = "setKPIS";
 export const ADD_LASTS_KPIS = "addLastsKPIS";
@@ -27,3 +30,5 @@ export const SET_PARAMETERS = "setParameters";
 export const SET_UPDATED_PARAMETER = "updateParameter";
 export const MANAGE_PARAMETERS_REQUEST_ERROR = "manageParametersRequestError";
 export const UPDATE_PARAMETERS_REQUEST_STATE = "updateParametersRequestState"
+
+

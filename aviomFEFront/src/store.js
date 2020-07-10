@@ -6,6 +6,7 @@ import events from "@/store/events.module";
 import evalParameters from "@/store/evaluator.parameters.module";
 import expressions from "@/store/evaluator.expressions.module";
 import dashboard from "@/store/evaluator.dashboard.module";
+import roles from "@/store/roles.module";
 
 Vue.use(Vuex);
 
@@ -26,7 +27,8 @@ export default new Vuex.Store({
     events,
     evalParameters,
     expressions,
-    dashboard
+    dashboard,
+    roles
   },
   plugins:[createPersistedState()],
   state: {

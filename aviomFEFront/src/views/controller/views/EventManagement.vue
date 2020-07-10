@@ -343,65 +343,9 @@ export default {
           title: "No disponible"
         }
       ],
-      assignedevents: [{
-        id: 1,
-        title: "Evento 1",
-        route: "T31",
-        state: "In procces",
-        priority: 400,
-        controller: "User1",
-        creation: "123",
-        check: "Check",
-        visible: true,
-        checkadd: true,
-        checkdelete: false,
-        actions: {
-
-        },
-        analysisElements: {
-          
-        }
-      }],
-      acceptedevents: [
-        {        
-        id: 1,
-        title: "Evento 1",
-        route: "T31",
-        state: "In procces",
-        priority: 1000,
-        controller: "User1",
-        creation: "123",
-        check: "Check",
-        visible: true,
-        checkadd: true,
-        checkdelete: false,
-        actions: {
-
-        },
-        analysisElements: {
-          
-        }
-      }
-      ],
-      onHoldEvents: [{
-                id: 1,
-        title: "Evento 1",
-        route: "T31",
-        state: "In procces",
-        priority: 1000,
-        controller: "User1",
-        creation: "123",
-        check: "Check",
-        visible: true,
-        checkadd: true,
-        checkdelete: false,
-        actions: {
-
-        },
-        analysisElements: {
-          
-        }
-      }],
+      assignedevents: [],
+      acceptedevents: [],
+      onHoldEvents: [],
       isOpenMessage: false,
       msg: "",
       lastEvent: 0,

@@ -33,8 +33,12 @@ const ApiService = {
   },
 
   post(resource, params) {
-    return Vue.axios.post(`${resource}`, params);
-  },
+    return Vue.axios.post(`${resource}`, params)
+        .catch(error => {
+            throw new Error(`[RWV] ApiService ${error}`);
+        }
+    );
+  },  
 
   update(resource, slug, params) {
     return Vue.axios.put(`${resource}/${slug}`, params);
@@ -53,25 +57,28 @@ export default ApiService;
 
 const operatorsResource = "/operators"
 export const OperatorsService = {
-  retrieveAll(online) {
-    ApiService.setHeader();
-    return ApiService.query(operatorsResource + "?online=" + online);
-  },
-  retrieveHistory(accountName) {
-    ApiService.setHeader();
-    return ApiService.get(operatorsResource, "controllers/" + accountName + "/history");
-  },
-  create() {
+    retrieveAll(online){
+      ApiService.setHeader();
+      return ApiService.query(operatorsResource + "?online=" + online);
+    },
+    retrieveHistory(accountName){
+      ApiService.setHeader();
+      return ApiService.get(operatorsResource, "controllers/" + accountName + "/history");
+    },
+    create(operator){
+      ApiService.setHeader();
+      return ApiService.post(operatorsResource,operator);
+    },
+    
+    update(operator){
+      ApiService.setHeader();
+      return ApiService.update(operatorsResource, operator)
+    },
 
-  },
-
-  update() {
-
-  },
-
-  destroy() {
-
-  }
+    destroy(accountName){
+      ApiService.setHeader();
+      return ApiService.delete(operatorsResource+"/"+accountName)
+    }
 };
 
 const eventsResource = "/events"
@@ -80,6 +87,30 @@ export const EventsService = {
     ApiService.setHeader();
     return ApiService.get(eventsResource, "controllers/" + accountName + "/history");
   }
+};
+
+const rolesResource = "/roles"
+export const RolesServices = {
+    retrieveAll(current){
+      ApiService.setHeader();
+      console.log(ApiService.query(rolesResource+ "?current="+ current));
+      return ApiService.query(rolesResource+ "?current="+ current);
+    },
+    create(roleName){
+      ApiService.setHeader();
+      return ApiService.post(rolesResource,roleName);
+    },
+    
+    update(roleName){
+      ApiService.setHeader();
+      return ApiService.update(rolesResource, roleName);
+    },
+
+    destroy(roleName){
+      ApiService.setHeader();
+      return ApiService.delete(rolesResource+"/"+roleName);
+    }
+  
 };
 
 
@@ -173,4 +204,4 @@ export const EvalUtilsService = {
     return ApiService.query(evaluatorUtilsResource + queryParam);
   },
 
-}
+};
