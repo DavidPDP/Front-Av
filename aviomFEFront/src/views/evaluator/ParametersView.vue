@@ -41,16 +41,8 @@
               {{ props.item.value }}
               <template v-slot:input>
                 <v-text-field
-                  v-if="props.item.name !== periodicityName"
                   v-model.number="defaultParameterValue"
                   :rules="[minRules]"
-                  label="Edit"
-                  single-line
-                  counter
-                ></v-text-field>
-                <v-text-field
-                  v-else
-                  v-model.number="defaultParameterValue"
                   label="Edit"
                   single-line
                   counter
@@ -112,8 +104,7 @@ export default {
         text:"",
       };
       if (
-        this.defaultParameterValue > 0 ||
-        item.name === this.periodicityName
+        this.defaultParameterValue > 0
       ) {
         if (item.value !== this.defaultParameterValue) {
           this.updateParameter(item, this.defaultParameterValue);
