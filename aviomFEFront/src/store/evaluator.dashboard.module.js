@@ -102,7 +102,7 @@ const mutations = {
                 let measurementIndex = kpi_measurements_copy[kpi].findIndex(item => item.id === measurement.id);
                 //if the new measurement does not exist.
                 if (measurementIndex === -1) {
-                    kpi_measurements_copy[kpi].push(measurement);
+                    kpi_measurements_copy[kpi].unshift(measurement);
                 }
             }
         }
