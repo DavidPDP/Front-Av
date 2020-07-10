@@ -86,21 +86,27 @@ const mutations = {
     },
     [SET_KPIS](state, kpis) {
         if (kpis) {
-            state.kpi_measurements = kpis;
-        }else{
-            state.kpi_measurements={};
+            for (let kpi in kpis) {
+                state.kpi_measurements[kpi] = kpis[kpi];
+            }
+        } else {
+            state.kpi_measurements = {};
         }
     },
     [ADD_LASTS_KPIS](state, kpis) {
+        let kpi_measurements_copy = state.kpi_measurements;
         //Kpis must be an object in which each property name represents a kpi name and contains a list fo measurements
-        for (let kpi in kpis) {
-            let measurement = kpis[kpi];
-            let measurementIndex = state.kpi_measurements[kpi].findIndex(item => item.id === measurement.id);
-            //if the new measurement does not exist.
-            if (measurementIndex === -1) {
-                state.kpi_measurements[kpi].push(measurement);
+        for (let kpi in kpi_measurements_copy) {
+            let measurement = kpis[kpi]; 
+            if (measurement) {
+                let measurementIndex = kpi_measurements_copy[kpi].findIndex(item => item.id === measurement.id);
+                //if the new measurement does not exist.
+                if (measurementIndex === -1) {
+                    kpi_measurements_copy[kpi].push(measurement);
+                }
             }
         }
+        state.kpi_measurements=kpi_measurements_copy;
     }
 };
 
