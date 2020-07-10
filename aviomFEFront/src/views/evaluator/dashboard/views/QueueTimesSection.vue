@@ -118,7 +118,10 @@
 import { mapGetters } from "vuex";
 import { MeasurementsService, EvalUtilsService } from "@/common/api.service";
 import { SET_DASHBOARD_REQUEST_STATE } from "@/store/actions.type";
-import { MANAGE_DASHBOARD_REQUEST_ERROR, ADD_LASTS_KPIS } from "@/store/mutations.type";
+import {
+  MANAGE_DASHBOARD_REQUEST_ERROR,
+  ADD_LASTS_KPIS
+} from "@/store/mutations.type";
 import { ERROR } from "@/common/evaluator.request.states.js";
 
 import LineChart from "./components/LineChart.js";
@@ -312,18 +315,18 @@ export default {
       }
     }
   }),
-  mounted(){
+  mounted() {
     this.setKPIMeasurements(this.measurements);
   },
-  created(){
-    this.unsubscribe  = this.$store.subscribe((mutation,state)=>{
-      if(mutation.type === ADD_LASTS_KPIS ){
-          console.log(`Updating to ${state.dashboard.kpi_measurements}`);
-          this.setKPIMeasurements(this.measurements);
+  created() {
+    this.unsubscribe = this.$store.subscribe((mutation, state) => {
+      if (mutation.type === ADD_LASTS_KPIS) {
+        console.log(`Updating to ${state.dashboard.kpi_measurements}`);
+        this.setKPIMeasurements(this.measurements);
       }
-    })
+    });
   },
-  beforeDestroy(){
+  beforeDestroy() {
     this.unsubscribe();
   },
   computed: {
@@ -521,20 +524,25 @@ export default {
     onGetKPICardMeasurements(measurementsGroupByKPIName) {
       this.setKPICardValues(this.KPI.maxWaitTime, measurementsGroupByKPIName);
       this.setKPICardValues(this.KPI.queueMaxSize, measurementsGroupByKPIName);
-      this.setKPICardValues(this.KPI.rateCareRequests, measurementsGroupByKPIName);
+      this.setKPICardValues(
+        this.KPI.rateCareRequests,
+        measurementsGroupByKPIName
+      );
     },
     setKPICardValues(kpiCard, data) {
       let value = 0;
       let lastValue = 0;
       let fixedValue = 0;
       let fixedLastValue = 0;
-      let measurements = data[kpiCard.kpiName];
-      if (measurements.length > 0) {
-        value = measurements[0].value;
-        fixedValue = parseInt(value.toFixed(0));
-        if (measurements.length > 1) {
-          lastValue = measurements[1].value;
-          fixedLastValue = parseInt(lastValue.toFixed(0));
+      if (data) {
+        let measurements = data[kpiCard.kpiName];
+        if (measurements && measurements.length > 0) {
+          value = measurements[0].value;
+          fixedValue = parseInt(value.toFixed(0));
+          if (measurements.length > 1) {
+            lastValue = measurements[1].value;
+            fixedLastValue = parseInt(lastValue.toFixed(0));
+          }
         }
       }
       this.$set(kpiCard, "value", fixedValue);
