@@ -86,13 +86,9 @@ const mutations = {
     },
     [SET_KPIS](state, kpis) {
         if (kpis) {
-            let kpisCopy = state.kpi_measurements;
-
-            for (let kpi in kpis) {
-                let measurements = kpis[kpi];
-                kpisCopy[kpi] = measurements;
-            }
-            state.kpi_measurements = kpisCopy;
+            state.kpi_measurements = kpis;
+        }else{
+            state.kpi_measurements={};
         }
     },
     [ADD_LASTS_KPIS](state, kpis) {

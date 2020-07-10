@@ -80,7 +80,6 @@ export default {
     BarChart
   },
   data: () => ({
-    onlineControllers: [],
     KPI: {
       controllersOccupationTime: {
         kpiName: "p",
@@ -144,14 +143,9 @@ export default {
   mounted(){
     this.setKPIMeasurements(this.measurements);
   },
-  watch: {
-    measurements(newValue) {
-      this.setKPIMeasurements(newValue);
-    }
-  },
   computed: {
     ...mapGetters({
-      omlineControllers: "controllers",
+      onlineControllers: "controllers",
       measurements: "measurements"
     })
   },
