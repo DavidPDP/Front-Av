@@ -524,8 +524,6 @@ export default {
       this.setKPICardValues(this.KPI.rateCareRequests, measurementsGroupByKPIName);
     },
     setKPICardValues(kpiCard, data) {
-      window.console.log("setting kpi cards values");
-      window.console.log(data);
       let value = 0;
       let lastValue = 0;
       let fixedValue = 0;
