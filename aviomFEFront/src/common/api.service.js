@@ -39,6 +39,13 @@ const ApiService = {
         }
     );
   },  
+  patch(resource, params) {
+    return Vue.axios.patch(`${resource}`, params)
+        .catch(error => {
+            throw new Error(`[RWV] ApiService ${error}`);
+        }
+    );
+  },
 
   update(resource, slug, params) {
     return Vue.axios.put(`${resource}/${slug}`, params);
@@ -85,7 +92,23 @@ const eventsResource = "/events"
 export const EventsService = {
     retrieveHistory(accountName){
       ApiService.setHeader();
-      return ApiService.get(eventsResource, "controllers/" + accountName + "/history");
+      return ApiService.get(eventsResource, "/controllers/" + accountName + "/history");
+    },
+    acceptEvent(accountName, eventCode){
+      ApiService.setHeader();
+      return ApiService.patch(eventsResource, "/accepted/" + accountName + "/" + eventCode);
+    },
+    rejectEvent(accountName, eventCode){
+      ApiService.setHeader();
+      return ApiService.patch(eventsResource, "/rejected/" + accountName + "/" + eventCode);
+    },
+    putOnHold(accountName, eventCode){
+      ApiService.setHeader();
+      return ApiService.patch(eventsResource, "/on_holded/" + accountName + "/" + eventCode);
+    }, 
+    completeProtocolStep(eventCode, step){
+      ApiService.setHeader();
+      return ApiService.post(eventsResource +"/"+ eventCode, step )
     }
 };
 
