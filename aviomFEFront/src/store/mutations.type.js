@@ -10,3 +10,8 @@ export const SET_EVENT_HISTORY="setEventHistory";
 
 //Roles module
 export const SET_ROLES="setRoles";
+export const ADD_ROLE="addRole";
+export const REMOVE_ROLE="removeRole";
+
+//Categories module
+export const SET_CATEGORIES="setCategories";

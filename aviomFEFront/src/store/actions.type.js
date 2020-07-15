@@ -16,3 +16,9 @@ export const FETCH_ROLES="fetchRoles";
 export const SAVE_ROLE="saveRole";
 export const UPDATE_ROLE="updateRole";
 export const DESTROY_ROLE="destroyRole";
+
+// Categories module
+export const FETCH_CATEGORIES="fetchRoles";
+export const SAVE_CATEGORY="saveCategory";
+export const UPDATE_CATEGORY="updateCategory";
+export const DESTROY_CATEGORY="destroyCategory";

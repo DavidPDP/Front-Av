@@ -4,6 +4,7 @@ import createPersistedState from "vuex-persistedstate";
 import operators from "@/store/operators.module";
 import events from "@/store/events.module";
 import roles from "@/store/roles.module";
+import categories from "@/store/categories.module";
 
 Vue.use(Vuex);
 
@@ -22,7 +23,8 @@ export default new Vuex.Store({
   modules: {
     operators,
     events,
-    roles
+    roles,
+    categories
   },
   plugins:[createPersistedState()],
   state: {
@@ -67,7 +69,8 @@ export default new Vuex.Store({
       'Rejected': 'Rechazado',
       'Solved': 'Resuelto',
       'Validated': 'Verificado',
-      'Unvalidated': 'No verificado'      
+      'Unvalidated': 'No verificado',
+      'On hold': 'En espera',    
     }
   },
   mutations: {

@@ -134,33 +134,33 @@ export default {
     },
     async save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.users[this.editedIndex], this.editedItem);
+        Object.assign(this.roles[this.editedIndex], this.editedItem);
         this.updateRole(this.editedIndex);
       } else {
         this.sendRole(this.editedItem);
         this.getRoles();
       }
       this.close();
-      //location.reload();
+      location.reload();
     },
     async getRoles() {
       this.$store.dispatch(FETCH_ROLES, false);
     },
 
     async sendRole(role) {
-      console.log("ENTRO");
-      this.$store.dispatch(SAVE_ROLE, role.name);
+      this.$store.dispatch(SAVE_ROLE, role);
+      this.getRoles();
     },
 
     deleteRole(role) {
       this.$store.dispatch(DESTROY_ROLE, role.name);
+      this.getRoles();
+      location.reload();
     },
 
     updateRole(index) {
-
-      
       let updateRole = this.roles[index];
-      this.$store.dispatch(UPDATE_ROLE, role.name);
+      this.$store.dispatch(UPDATE_ROLE, updateRole);
     }
   }
 
@@ -170,7 +170,7 @@ export default {
 <style>
 .rolesManagementContent {
   width: 100%;
-  /* margin: 2px 15px; */
+  /* margin: 2px 15px; */ 
   margin-top: 15px;
   margin-left: 10px;
   margin-right: 10px;

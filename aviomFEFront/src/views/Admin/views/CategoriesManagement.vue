@@ -240,7 +240,9 @@
 </template>
 
 <script>
-import Axios from "axios";
+
+import { mapGetters } from "vuex";
+import { FETCH_CATEGORIES, SAVE_CATEGORY } from "@/store/actions.type";
 
 export default {
     data(){
@@ -252,10 +254,9 @@ export default {
               { text: "Nombre", align: "left", sortable: false, value: "name" },
               { text: "Prioridad", value: "basePriority" },
               { text: "Categoría", value: "category.name" },
-              { text: "Protocolos", value: "category.name" },
+              { text: "Protocolos", value: "category.protocols.length" },
               { text: "Acciones", value: "action", sortable: false }
             ],
-            categories: [],
             editedIndex: -1,
               editedItem: {
                 name: "",
@@ -286,6 +287,8 @@ export default {
         }
     },
     computed: {
+    ...mapGetters(["categories"]),
+
     categoryFormTitle() {
       return this.editedIndex === -1 ? "Nueva Categoría" : "Editar Categoría";
     },
@@ -305,7 +308,7 @@ export default {
         return [
           {
             stepOrder: 'Protocolos',
-            children: this.editedItem.protocols,
+            children: this.editedItem.category.protocols,
           },
         ]
       },
@@ -313,7 +316,7 @@ export default {
   
         if (!this.active.length) return undefined
         const id = this.active[0]
-        this.protocol = this.editedItem.protocols.find(item => item.id == id);
+        this.protocol = this.editedItem.category.protocols.find(item => item.id == id);
         return this.protocol;
       },
 
@@ -374,7 +377,7 @@ export default {
         this.updateCategory(this.editedIndex);
       } else {
 
-       // this.sendDataCategory(this.editedItem);
+        this.sendDataCategory(this.editedItem);
         //this.categories.push(this.editedItem);
       }
       this.close();
@@ -382,20 +385,16 @@ export default {
     },
 
     async sendDataCategory(category) {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "/atc/category";
-      Axios.post(
-        url,
+      let newCategory =
         {
           name: category.firstName,
           category: category.category,
           base_priority: category.base_priority,
           protocols: category.protocols,
-        },
-        { headers: headers }
-      ).then(response => {
-        alert(response.data);
-      });
+        };
+
+      this.$store.dispatch(SAVE_CATEGORY, category);
+      
     },
 
 /// Preguntar a johan
@@ -435,12 +434,7 @@ export default {
 
 
      async getCategories() {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "/atc/categories?current="+ true ;
-        Axios.get(url).then(response => {
-        this.categories = response.data;
-        
-      });
+      this.$store.dispatch(FETCH_CATEGORIES, true);
       //console.log(this.categories)
     },
 

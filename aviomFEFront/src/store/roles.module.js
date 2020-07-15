@@ -37,10 +37,9 @@ const actions = {
             console.log(error);
         });
     },
-    [SAVE_ROLE](context, roleName){
-        RolesServices.create(roleName).then(
+    [SAVE_ROLE](context, role){
+        RolesServices.create(role).then(
             ({ data }) =>{
-                console.log("AAAAAAAAAAAAAAAAAAA")
                 console.log(data)
             }
         )

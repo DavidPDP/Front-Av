@@ -157,7 +157,7 @@
             <v-card-title class="eventsTitle">Eventos Aceptados</v-card-title>
             <div v-for="(item,index) in acceptedevents" :key="index">
               <v-row>
-                <v-col cols="10">
+                <v-col cols="9">
                   <v-btn
                     class="eventsBody"
                     text
@@ -169,7 +169,7 @@
                   <v-chip text-color="white" v-if="item.priority >= 700" color="red">{{item.priority}}</v-chip>
                   <v-chip text-color="white" v-else color="primary">{{item.priority}}</v-chip>
                 </v-col>
-                <v-col cols="1">
+                <v-col cols="2">
                   <!-- <v-btn text block @click="eventfinished(item)">
                     <v-icon>check_circle_outline</v-icon>
                   </v-btn>-->
@@ -180,6 +180,10 @@
                         <template v-slot:activator="{ on }">
                           <v-btn color="blue-grey lighten-3" v-on="on">
                             <v-icon>check_circle_outline</v-icon>
+                          </v-btn>
+                          
+                          <v-btn color="blue-grey lighten-3" @click="EventOnHold(item)">
+                            <v-icon>hourglass_empty</v-icon>
                           </v-btn>
                         </template>
                         <v-card>
@@ -256,7 +260,7 @@
                   <v-chip text-color="white" v-else color="primary">{{item.priority}}</v-chip>
                 </v-col>
                 <v-col cols="1">
-                  <v-btn text block @click="checkadd(item)">
+                  <v-btn text block @click="backToAccept(item)">
                     <v-icon>check_circle_outline</v-icon>
                   </v-btn>
                 </v-col>
@@ -322,8 +326,8 @@ export default {
   data() {
     return {
       name: "eventManagement",
-      statecontroller: "",
-      statecolor: "",
+      statecontroller: "Disponible",
+      statecolor: "green",
       eventRejectDialog: false,
       eventRejectJustification:"",
       eventFinishedDialog: false,
@@ -354,6 +358,10 @@ export default {
   },
   methods: {
     ...mapActions(["resetPersonState", "removeToken"]),
+
+    EventOnHold(item){ },
+    backToAccept(item){},
+
     menucontroller(item) {
       if (item.title == "Cerrar sesión") {
         this.resetPersonState();
@@ -421,8 +429,12 @@ export default {
           state = "Unavailable";
           this.justificationDialog = true;
           this.justificationSelected = "";
+          this.statecontroller= item;
+          this.statecolor = "red";
         } else if (item == "Disponible") {
           state = "Available";
+          this.statecontroller= item;
+          this.statecolor = "green";
         }
         if (state != "") {
           Axios.post(
@@ -501,6 +513,7 @@ export default {
       this.getControllerState();
     },
     eventfinished(item) {
+      this.acceptedevents.pop(item);
       var headers = { Authorization: this.$store.state.token };
       let pending = 0;
       item.analysisElements.forEach(element => {

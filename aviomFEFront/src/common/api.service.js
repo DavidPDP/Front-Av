@@ -113,3 +113,25 @@ export const RolesServices = {
     }
   
 };
+
+const categoryResource = "/categories";
+export const categoriesServices = {
+    retrieveAll(current){
+      ApiService.setHeader();
+      return ApiService.query(categoryResource+ "?current="+ current);
+    },
+    create(category){
+      ApiService.setHeader();
+      return ApiService.post(categoryResource,category);
+    },
+    
+    update(category){
+      ApiService.setHeader();
+      return ApiService.update(categoryResource, category);
+    },
+
+    destroy(categoryName){
+      ApiService.setHeader();
+      return ApiService.delete(categoryResource+"/"+categoryName);
+    }
+};
