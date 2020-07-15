@@ -137,11 +137,11 @@ export default {
         Object.assign(this.roles[this.editedIndex], this.editedItem);
         this.updateRole(this.editedIndex);
       } else {
-        this.sendRole(this.editedItem);
+        this.sendRole(this.editedItem.name);
         this.getRoles();
       }
       this.close();
-      location.reload();
+      //location.reload();
     },
     async getRoles() {
       this.$store.dispatch(FETCH_ROLES, false);

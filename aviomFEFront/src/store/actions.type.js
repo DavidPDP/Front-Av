@@ -22,3 +22,8 @@ export const FETCH_CATEGORIES="fetchRoles";
 export const SAVE_CATEGORY="saveCategory";
 export const UPDATE_CATEGORY="updateCategory";
 export const DESTROY_CATEGORY="destroyCategory";
+
+// Steps module 
+export const FETCH_STEPS="fetchSteps";
+export const SAVE_STEP="saveStep";
+export const DESTROY_STEP="destroyStep";

@@ -5,6 +5,7 @@ import operators from "@/store/operators.module";
 import events from "@/store/events.module";
 import roles from "@/store/roles.module";
 import categories from "@/store/categories.module";
+import steps from "@/store/steps.module";
 
 Vue.use(Vuex);
 
@@ -24,7 +25,8 @@ export default new Vuex.Store({
     operators,
     events,
     roles,
-    categories
+    categories,
+    steps
   },
   plugins:[createPersistedState()],
   state: {
@@ -115,9 +117,9 @@ export default new Vuex.Store({
     removeToken({ commit }){
       commit('clearToken');
     },
-    updateRole({commit},role){
-      commit('changeCurrentRole', role)
-    },
+   // updateRole({commit},role){
+   //   commit('changeCurrentRole', role)
+   // },
     setPersonRoles({commit}, roles){
       commit('updateRoles', roles)
     },

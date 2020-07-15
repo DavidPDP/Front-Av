@@ -242,7 +242,7 @@
 <script>
 
 import { mapGetters } from "vuex";
-import { FETCH_CATEGORIES, SAVE_CATEGORY } from "@/store/actions.type";
+import { FETCH_CATEGORIES, SAVE_CATEGORY, DESTROY_CATEGORY, UPDATE_CATEGORY, FETCH_STEPS, SAVE_STEP, DESTROY_STEP } from "@/store/actions.type";
 
 export default {
     data(){
@@ -287,7 +287,7 @@ export default {
         }
     },
     computed: {
-    ...mapGetters(["categories"]),
+    ...mapGetters(["categories", "steps"]),
 
     categoryFormTitle() {
       return this.editedIndex === -1 ? "Nueva Categoría" : "Editar Categoría";
@@ -393,17 +393,14 @@ export default {
           protocols: category.protocols,
         };
 
-      this.$store.dispatch(SAVE_CATEGORY, category);
+      this.$store.dispatch(SAVE_CATEGORY, newCategory);
+      location.reload();
       
     },
 
 /// Preguntar a johan
       updateCategory(index) {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "/act/category";
-      let updateCategory = this.categories[index];
-      Axios.put(
-        url,
+     let category =
         {
           id: updateCategory.id,
           name: updateCategory.firstName,
@@ -411,25 +408,15 @@ export default {
           base_priority: updateCategory.base_priority,
           protocols: updateCategory.protocols,
         },
-        { headers: headers }
-      ).then(response => {
-        alert(response.data);
-        location.reload();
-      });
+
+      this.$store.dispatch(UPDATE_CATEGORY, category);
+      location.reload();
     },
 
 
       deleteCategory(category) {
-      var headers = { Authorization: this.$store.state.token };
-      let url = this.$store.state.backend + "/atc/category/"+category.name;
-      Axios.delete(
-        url,
-        {},
-        { headers: headers }
-      ).then(response => {
-        alert(response.data);
-        location.reload();
-      });
+      this.$store.dispatch(DESTROY_CATEGORY, category.name);
+      location.reload();
     },
 
 

@@ -101,7 +101,7 @@ export default {
           this.setPersonName(response.data.user.name);
           this.setAccountName(response.data.user.accountName); 
 
-          let rol = this.select;
+          let rol = "Omega";
 
           if (rol == "Controller") {
             NotificationManager.run("/queue/" + response.data.channel);

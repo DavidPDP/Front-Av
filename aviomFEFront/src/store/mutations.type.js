@@ -15,3 +15,6 @@ export const REMOVE_ROLE="removeRole";
 
 //Categories module
 export const SET_CATEGORIES="setCategories";
+
+//Steps module
+export const SET_STEPS="setSteps";

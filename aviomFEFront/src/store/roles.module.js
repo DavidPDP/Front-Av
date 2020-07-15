@@ -45,7 +45,7 @@ const actions = {
         )
     },
     [UPDATE_ROLE](context, roleName){
-        RolesServices.update(roleName).then(
+        RolesServices.update(roleName.name).then(
             ({ data }) =>{
                 console.log(data)
             }

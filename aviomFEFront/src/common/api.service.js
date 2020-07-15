@@ -135,3 +135,19 @@ export const categoriesServices = {
       return ApiService.delete(categoryResource+"/"+categoryName);
     }
 };
+
+const StepResource = "/steps";
+export const StepServices = {
+    retrieveAll(current){
+      ApiService.setHeader();
+      return ApiService.query(StepResource+ "?current="+ current);
+    },
+    create(step){
+      ApiService.setHeader();
+      return ApiService.post(StepResource,step);
+    },
+    destroy(code){
+      ApiService.setHeader();
+      return ApiService.delete(StepResource+"/"+code);
+    }
+};
